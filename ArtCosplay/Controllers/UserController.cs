@@ -1,5 +1,9 @@
-﻿using ArtCosplay.Models.DB;
+﻿using ArtCosplay.Models;
+using ArtCosplay.Models.DB;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 namespace ArtCosplay.Controllers
 {
@@ -41,17 +45,65 @@ namespace ArtCosplay.Controllers
         }
 
         [HttpPost]
-        public ActionResult<string> CreateUser(User User)
+        public ActionResult<string> CreateUser([FromBody] RegisterUser user)
         {
             try
             {
-                _appDbContext.Users.Add(User);
+                var users = _appDbContext.Users.Where(x => x.Username == user.Name || x.Email == user.Email);
+
+                if(users.Any())
+                {
+                    return BadRequest(new
+                    {
+                        Status = "error",
+                        Message = "An account with this email or username already exists in our system"
+                    });
+                }
+
+                var results = new List<ValidationResult>();
+                var context = new ValidationContext(user);
+                if (!Validator.TryValidateObject(user, context, results, true))
+                {
+                    return BadRequest(new
+                    {
+                        Message = "Several validation errors appeared",
+                        ValidationErrors = results.Select(x => x.ErrorMessage)
+                    });
+                }
+
+                string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                    password: user.Password,
+                    salt: Encoding.UTF8.GetBytes("ExampleSalt"),
+                    prf: KeyDerivationPrf.HMACSHA256,
+                    iterationCount: 100000,
+                    numBytesRequested: 256 / 8)
+                );
+
+
+                _appDbContext.Users.Add(new User
+                {
+                    Username = user.Name,
+                    Email = user.Email,
+                    PasswordHash = hashed,
+                    Bio = user.About,
+                    AvatarUrl = $"/data/placeholder.jpg"
+                });
                 _appDbContext.SaveChanges();
-                return StatusCode(201, "User added");
+
+                return StatusCode(201, new
+                {
+                    Status = "success",
+                    Message = "User added"
+                });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new
+                {
+                    Status = "error",
+                    Message = ex.Message
+                });
+                
             }
         }
     }
