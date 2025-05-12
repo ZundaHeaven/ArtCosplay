@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35919.96
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtCosplay", "ArtCosplay\ArtCosplay.csproj", "{C9B7B096-8E07-4845-9DFE-1F217AE0B201}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{F6D77E87-48C7-4A35-AD4F-E5E6E42348CB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9B7B096-8E07-4845-9DFE-1F217AE0B201}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9B7B096-8E07-4845-9DFE-1F217AE0B201}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9B7B096-8E07-4845-9DFE-1F217AE0B201}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9B7B096-8E07-4845-9DFE-1F217AE0B201}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6D77E87-48C7-4A35-AD4F-E5E6E42348CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6D77E87-48C7-4A35-AD4F-E5E6E42348CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6D77E87-48C7-4A35-AD4F-E5E6E42348CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6D77E87-48C7-4A35-AD4F-E5E6E42348CB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {21860B7D-78B3-42B4-AB74-2C646944232E}
+	EndGlobalSection
+EndGlobal

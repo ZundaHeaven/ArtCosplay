@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ArtCosplay</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ArtCosplay.styles.css" asp-append-version="true" />
+</head>
+<body style=" display: flex; flex-direction: column; min-height: 100vh; ">
+    <div class="anime-decoration decoration-1">(≧▽≦)</div>
+    <div class="anime-decoration decoration-2">♡(>ᴗ•)</div>
+
+    <header>
+        <div class="header-container">
+            <div class="logo-container">
+                <div class="logo">Art-Cosplay</div>
+@*                 <div class="search-bar">
+                    <input type="text" placeholder="Поиск по сайту...">
+                    <button><i class="fas fa-search"></i></button>
+                </div> *@
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Арты</a></li>
+                    <li><a href="#">Обсуждения</a></li>
+                    <li><a href="#">Барахолка</a></li>
+                    <li><a href="#">Каталог образов</a></li>
+                    <li><a href="#">Ваш Профиль</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="flex: 1; align-self: center;">
+        <main role="main" class="pb-3" style="display: block;">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>О нас</h3>
+                <p>Art-Cosplay - это сообщество любителей аниме, косплея и искусства. Мы объединяем творческих людей с 2025 года.</p>
+                <a href="#">Подробнее</a>
+            </div>
+            <div class="footer-column">
+                <h3>Контакты</h3>
+                <a href="mailto:info@art-cosplay.ru">info@art-cosplay.ru</a>
+                <a href="tel:+79991234567">+7 (999) 123-45-67</a>
+                <p>Москва, ул. Анимешная, 15</p>
+            </div>
+            <div class="footer-column">
+                <h3>Полезные ссылки</h3>
+                <a href="#">Правила сайта</a>
+                <a href="#">FAQ</a>
+                <a href="#">Реклама на сайте</a>
+                <a href="#">Вакансии</a>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2025 Art-Cosplay. Все права защищены.
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
