@@ -1,0 +1,207 @@
+﻿.search-bar {
+    display: flex;
+}
+        
+.search-bar input {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 20px 0 0 20px;
+    width: 200px;
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+        
+.search-bar button {
+    background-color: #6a11cb;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 0 20px 20px 0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+        
+.search-bar button:hover {
+    background-color: #2575fc;
+}
+        
+.catalog-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+        
+.catalog-title {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #6a11cb;
+    font-family: 'Comic Sans MS', cursive;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    border-bottom: 2px solid #2575fc;
+    padding-bottom: 10px;
+}
+
+.catalog-search {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.catalog-search input {
+    flex: 1;
+    padding: 12px 20px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    background-color: rgba(255, 255, 255, 0.9);
+    outline: none;
+    font-size: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.catalog-search button {
+    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.3s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.catalog-search button:hover {
+    transform: translateY(-2px);
+}
+
+.catalog-filters {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.filter-tab {
+    padding: 8px 16px;
+    border-radius: 20px;
+    background-color: rgba(106, 17, 203, 0.1);
+    color: #6a11cb;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+    font-size: 14px;
+}
+
+.filter-tab.active {
+    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+}
+
+.filter-tab:hover {
+    background-color: rgba(106, 17, 203, 0.2);
+}
+
+.filter-select {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    outline: none;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+        
+.characters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+        
+.character-card {
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: transform 0.3s;
+}
+        
+.character-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+        
+.character-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-bottom: 2px solid #6a11cb;
+}
+        
+.character-info {
+    padding: 15px;
+}
+        
+.character-name {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #6a11cb;
+}
+        
+.character-anime {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 10px;
+}
+        
+.character-posts {
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 15px;
+}
+        
+.view-posts {
+    display: inline-block;
+    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: transform 0.3s;
+}
+        
+.view-posts:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+        
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    gap: 10px;
+}
+
+.page-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    color: #6a11cb;
+    font-weight: bold;
+    text-decoration: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+}
+
+.page-number:hover, .page-number.active {
+    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    transform: translateY(-3px);
+}

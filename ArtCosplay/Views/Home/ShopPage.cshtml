@@ -1,0 +1,210 @@
+﻿@{
+    ViewData["Title"] = "Барахолка";
+}
+
+<div class="marketplace-container">
+    <div class="items-list">
+        <h1 class="items-title">Барахолка</h1>
+
+        <div class="marketplace-search">
+            <input type="text" placeholder="Поиск по товарам...">
+            <button><i class="fas fa-search"></i> Найти</button>
+        </div>
+
+        <div class="marketplace-filters">
+            <select class="filter-select">
+                <option value="">Все категории</option>
+                <option value="wigs">Парики</option>
+                <option value="costumes">Костюмы</option>
+                <option value="props">Реквизит</option>
+                <option value="shoes">Обувь</option>
+                <option value="art-supplies">Материалы для рисования</option>
+            </select>
+
+            <select class="filter-select">
+                <option value="">Любой город</option>
+                <option value="moscow">Москва</option>
+                <option value="spb">Санкт-Петербург</option>
+                <option value="kazan">Казань</option>
+                <option value="ekb">Екатеринбург</option>
+            </select>
+
+            <select class="filter-select">
+                <option value="">Любая цена</option>
+                <option value="0-1000">до 1 000 ₽</option>
+                <option value="1000-3000">1 000 - 3 000 ₽</option>
+                <option value="3000-5000">3 000 - 5 000 ₽</option>
+                <option value="5000+">от 5 000 ₽</option>
+            </select>
+        </div>
+
+        <div class="items-grid">
+            <div class="item-card">
+                <span class="item-price">2 500 ₽</span>
+                <img src="arik.jpg" alt="Парик для косплея" class="item-image">
+                <h3 class="item-title">Парик для Хацунэ Мику</h3>
+                <p class="item-description">Качественный синтетический парик голубого цвета. Длина 60 см. Использовался 2 раза.</p>
+                <div class="item-seller">
+                    <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Продавец" class="seller-avatar">
+                    <div>
+                        <div class="seller-name">CosplayShop</div>
+                        <div class="item-location">Москва</div>
+                    </div>
+                </div>
+                <div class="item-actions">
+                    <button class="item-btn">В корзину</button>
+                    <button class="item-btn">Сообщение</button>
+                </div>
+            </div>
+
+            <div class="item-card">
+                <span class="item-price">3 800 ₽</span>
+                <img src="s-l1200.jpg" alt="Косплей костюм" class="item-image">
+                <h3 class="item-title">Костюм Сакуры (Наруто)</h3>
+                <p class="item-description">Полный комплект: кимоно, пояс, набедренная повязка. Размер S-M. Отличное состояние.</p>
+                <div class="item-seller">
+                    <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Продавец" class="seller-avatar">
+                    <div>
+                        <div class="seller-name">AnimeLover</div>
+                        <div class="item-location">Санкт-Петербург</div>
+                    </div>
+                </div>
+                <div class="item-actions">
+                    <button class="item-btn">В корзину</button>
+                    <button class="item-btn">Сообщение</button>
+                </div>
+            </div>
+
+            <div class="item-card">
+                <span class="item-price">1 200 ₽</span>
+                <img src="1419431596.png" alt="Кисти для рисования" class="item-image">
+                <h3 class="item-title">Набор кистей для рисования</h3>
+                <p class="item-description">12 профессиональных кистей разного размера. Идеально для акварели и акрила.</p>
+                <div class="item-seller">
+                    <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Продавец" class="seller-avatar">
+                    <div>
+                        <div class="seller-name">ArtSupplies</div>
+                        <div class="item-location">Казань</div>
+                    </div>
+                </div>
+                <div class="item-actions">
+                    <button class="item-btn">В корзину</button>
+                    <button class="item-btn">Сообщение</button>
+                </div>
+            </div>
+
+            <div class="item-card">
+                <span class="item-price">5 500 ₽</span>
+                <img src="guts.png" alt="Меч для косплея" class="item-image">
+                <h3 class="item-title">Меч Гатса (Берсерк)</h3>
+                <p class="item-description">Ручная работа из EVA foam и пластика. Длина 150 см. Очень легкий и прочный.</p>
+                <div class="item-seller">
+                    <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Продавец" class="seller-avatar">
+                    <div>
+                        <div class="seller-name">BerserkFan</div>
+                        <div class="item-location">Екатеринбург</div>
+                    </div>
+                </div>
+                <div class="item-actions">
+                    <button class="item-btn">В корзину</button>
+                    <button class="item-btn">Сообщение</button>
+                </div>
+            </div>
+
+            <div class="item-card">
+                <span class="item-price">4 200 ₽</span>
+                <img src="61WMdy6SIIL._AC_UY1000_.jpg" alt="Косплей обувь" class="item-image">
+                <h3 class="item-title">Сапоги для косплея</h3>
+                <p class="item-description">Черные кожаные сапоги на каблуке 5 см. Размер 38. Подойдут для многих персонажей.</p>
+                <div class="item-seller">
+                    <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Продавец" class="seller-avatar">
+                    <div>
+                        <div class="seller-name">CosplayGear</div>
+                        <div class="item-location">Новосибирск</div>
+                    </div>
+                </div>
+                <div class="item-actions">
+                    <button class="item-btn">В корзину</button>
+                    <button class="item-btn">Сообщение</button>
+                </div>
+            </div>
+
+            <div class="item-card">
+                <span class="item-price">2 800 ₽</span>
+                <img src="9add670f-783f-4a53-984d-f92cc4eb26d3.jpg" alt="Маркеры для рисования" class="item-image">
+                <h3 class="item-title">Набор маркеров Copic</h3>
+                <p class="item-description">6 маркеров Copic Ciao (почти новые). Включает 3 основных цвета и 3 оттенка кожи.</p>
+                <div class="item-seller">
+                    <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Продавец" class="seller-avatar">
+                    <div>
+                        <div class="seller-name">DigitalArtist</div>
+                        <div class="item-location">Москва</div>
+                    </div>
+                </div>
+                <div class="item-actions">
+                    <button class="item-btn">В корзину</button>
+                    <button class="item-btn">Сообщение</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="pagination">
+            <a href="#" class="page-number active">1</a>
+            <a href="#" class="page-number">2</a>
+            <a href="#" class="page-number">3</a>
+            <a href="#" class="page-number">4</a>
+            <a href="#" class="page-number">5</a>
+        </div>
+    </div>
+
+    <aside class="sell-item">
+        <h2 class="sell-title">Продать свой товар</h2>
+        <form>
+            <div class="form-group">
+                <label for="item-name">Название товара</label>
+                <input type="text" id="item-name" placeholder="Например: Парик для косплея">
+            </div>
+
+            <div class="form-group">
+                <label for="item-price">Цена (₽)</label>
+                <input type="number" id="item-price" placeholder="Укажите цену">
+            </div>
+
+            <div class="form-group">
+                <label>Фотографии товара</label>
+                <div class="file-upload">
+                    <div class="file-upload-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <span class="file-upload-text">Добавьте до 5 фото товара</span>
+                    <input type="file" id="item-photos" style="display: none;" multiple>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="item-category">Категория</label>
+                <select id="item-category">
+                    <option value="">Выберите категорию</option>
+                    <option value="wigs">Парики</option>
+                    <option value="costumes">Костюмы</option>
+                    <option value="props">Реквизит</option>
+                    <option value="shoes">Обувь</option>
+                    <option value="art-supplies">Материалы для рисования</option>
+                    <option value="other">Другое</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="item-description">Описание</label>
+                <textarea id="item-description" placeholder="Подробно опишите товар, укажите состояние, размеры и т.д."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="item-location">Город</label>
+                <input type="text" id="item-location" placeholder="Где находится товар">
+            </div>
+
+            <button type="submit" class="submit-btn">Разместить объявление</button>
+        </form>
+    </aside>
+</div>

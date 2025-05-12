@@ -1,0 +1,188 @@
+﻿.login-container {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+        
+.login-title {
+    font-size: 24px;
+    margin-bottom: 25px;
+    color: #6a11cb;
+    text-align: center;
+    font-family: 'Comic Sans MS', cursive;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+        
+.form-group {
+    margin-bottom: 20px;
+}
+        
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+}
+        
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s;
+}
+        
+.form-group input:focus {
+    border-color: #6a11cb;
+    box-shadow: 0 0 0 2px rgba(106, 17, 203, 0.2);
+    outline: none;
+}
+        
+.login-button {
+    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+    margin-top: 10px;
+}
+        
+.login-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+        
+.remember-forgot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+        
+.remember-me {
+    display: flex;
+    align-items: center;
+}
+        
+.remember-me input {
+    margin-right: 8px;
+}
+        
+.forgot-password {
+    color: #6a11cb;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s;
+}
+        
+.forgot-password:hover {
+    color: #2575fc;
+    text-decoration: underline;
+}
+        
+.login-links {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+}
+        
+.login-links a {
+    color: #6a11cb;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+        
+.login-links a:hover {
+    color: #2575fc;
+    text-decoration: underline;
+}
+        
+.social-login {
+    margin-top: 30px;
+    text-align: center;
+}
+        
+.social-login-title {
+    position: relative;
+    margin-bottom: 20px;
+    color: #777;
+    font-size: 14px;
+}
+        
+.social-login-title::before,
+.social-login-title::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 30%;
+    height: 1px;
+    background-color: #ddd;
+}
+        
+.social-login-title::before {
+    left: 0;
+}
+        
+.social-login-title::after {
+    right: 0;
+}
+        
+.social-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+        
+.social-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    text-decoration: none;
+    transition: transform 0.3s;
+}
+        
+.social-button:hover {
+    transform: translateY(-3px);
+}
+        
+.social-button.vk {
+    background-color: #4a76a8;
+}
+        
+.social-button.google {
+    background-color: #db4437;
+}
+        
+.social-button.twitter {
+    background-color: #1da1f2;
+}
+        
+.back-button {
+    display: inline-block;
+    margin-top: 20px;
+    color: #6a11cb;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+        
+.back-button:hover {
+    color: #2575fc;
+    text-decoration: underline;
+}

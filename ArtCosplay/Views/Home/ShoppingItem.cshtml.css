@@ -1,0 +1,278 @@
+﻿.product-container {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+        
+.product-section {
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+        
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    margin-bottom: 20px;
+    transition: transform 0.3s;
+}
+        
+.back-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+        
+.product-title {
+    font-size: 28px;
+    color: #6a11cb;
+    margin-bottom: 15px;
+    font-family: 'Comic Sans MS', cursive;
+}
+        
+.product-price {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+        
+.product-gallery {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+        
+.product-main-image {
+    flex: 1;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid rgba(106, 17, 203, 0.3);
+}
+        
+.product-thumbnails {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 80px;
+}
+        
+.product-thumbnail {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+        
+.product-thumbnail:hover {
+    border-color: #6a11cb;
+}
+        
+.product-details {
+    margin-bottom: 25px;
+}
+        
+.product-details-title {
+    font-size: 20px;
+    color: #6a11cb;
+    margin-bottom: 10px;
+    font-family: 'Comic Sans MS', cursive;
+    border-bottom: 2px solid #2575fc;
+    padding-bottom: 5px;
+}
+        
+.product-description {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 15px;
+}
+        
+.product-info {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+        
+.info-label {
+    font-weight: bold;
+    color: #666;
+}
+        
+.info-value {
+    color: #444;
+}
+        
+.product-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+        
+.action-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+        
+.buy-btn {
+    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+}
+        
+.cart-btn {
+    background-color: rgba(106, 17, 203, 0.1);
+    color: #6a11cb;
+    border: 1px solid #6a11cb;
+}
+        
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+        
+.chat-section {
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    height: fit-content;
+    position: sticky;
+    top: 90px;
+}
+        
+.chat-title {
+    font-size: 20px;
+    color: #6a11cb;
+    margin-bottom: 20px;
+    font-family: 'Comic Sans MS', cursive;
+    border-bottom: 2px solid #2575fc;
+    padding-bottom: 5px;
+}
+        
+.seller-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+        
+.seller-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #6a11cb;
+}
+        
+.seller-name {
+    font-weight: bold;
+    color: #6a11cb;
+    font-size: 18px;
+}
+        
+.seller-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #ffc107;
+    font-size: 14px;
+    margin-top: 3px;
+}
+        
+.seller-location {
+    font-size: 13px;
+    color: #777;
+    margin-top: 5px;
+}
+        
+.chat-messages {
+    height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+        
+.message {
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    border-radius: 18px;
+    max-width: 80%;
+    font-size: 14px;
+    line-height: 1.4;
+}
+        
+.seller-message {
+    background-color: rgba(106, 17, 203, 0.1);
+    border-bottom-left-radius: 4px;
+    margin-right: auto;
+}
+        
+.user-message {
+    background-color: rgba(37, 117, 252, 0.1);
+    border-bottom-right-radius: 4px;
+    margin-left: auto;
+    text-align: right;
+}
+        
+.message-time {
+    font-size: 11px;
+    color: #777;
+    margin-top: 5px;
+}
+        
+.chat-input {
+    display: flex;
+    gap: 10px;
+}
+        
+.chat-input-field {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.8);
+    outline: none;
+}
+        
+.send-btn {
+    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+        
+.send-btn:hover {
+    transform: translateY(-2px);
+}

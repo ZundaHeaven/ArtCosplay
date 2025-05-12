@@ -1,0 +1,104 @@
+﻿@{
+    ViewData["Title"] = "Каталог образов";
+}
+
+
+<div class="catalog-container">
+    <h1 class="catalog-title">Каталог образов</h1>
+
+    <div class="catalog-search">
+        <input type="text" placeholder="Поиск персонажа или аниме...">
+        <button><i class="fas fa-search"></i> Найти</button>
+    </div>
+
+    <div class="catalog-filters">
+        <button class="filter-tab active">Все персонажи</button>
+        <button class="filter-tab">Популярные</button>
+        <button class="filter-tab">Новые</button>
+
+        <select class="filter-select">
+            <option value="">Все аниме</option>
+            <option value="naruto">Наруто</option>
+            <option value="attackontitan">Атака Титанов</option>
+            <option value="vocaloid">Vocaloid</option>
+            <option value="cowboybebop">Ковбой Бибоп</option>
+        </select>
+
+        <select class="filter-select">
+            <option value="">Сортировка по умолчанию</option>
+            <option value="popular">По популярности</option>
+            <option value="new">По новизне</option>
+            <option value="posts">По количеству постов</option>
+        </select>
+    </div>
+
+    <div class="characters-grid">
+        <div class="character-card">
+            <img src="s-l1200 (1).jpg" alt="Хацунэ Мику" class="character-image">
+            <div class="character-info">
+                <h3 class="character-name">Хацунэ Мику</h3>
+                <p class="character-anime">Vocaloid</p>
+                <p class="character-posts">24 поста с этим персонажем</p>
+                <a href="#" class="view-posts">Смотреть посты</a>
+            </div>
+        </div>
+
+        <div class="character-card">
+            <img src="aku.png" alt="Сакура Харуно" class="character-image">
+            <div class="character-info">
+                <h3 class="character-name">Сакура Харуно</h3>
+                <p class="character-anime">Наруто</p>
+                <p class="character-posts">18 постов с этим персонажем</p>
+                <a href="#" class="view-posts">Смотреть посты</a>
+            </div>
+        </div>
+
+        <div class="character-card">
+            <img src="leviacker.jpg" alt="Леви Аккерман" class="character-image">
+            <div class="character-info">
+                <h3 class="character-name">Леви Аккерман</h3>
+                <p class="character-anime">Атака Титанов</p>
+                <p class="character-posts">32 поста с этим персонажем</p>
+                <a href="#" class="view-posts">Смотреть посты</a>
+            </div>
+        </div>
+
+        <div class="character-card">
+            <img src="pike.png" alt="Спайк Шпигель" class="character-image">
+            <div class="character-info">
+                <h3 class="character-name">Спайк Шпигель</h3>
+                <p class="character-anime">Ковбой Бибоп</p>
+                <p class="character-posts">12 постов с этим персонажем</p>
+                <a href="#" class="view-posts">Смотреть посты</a>
+            </div>
+        </div>
+
+        <div class="character-card">
+            <img src="nezuko.jpg" alt="Камадо Незуко" class="character-image">
+            <div class="character-info">
+                <h3 class="character-name">Камадо Незуко</h3>
+                <p class="character-anime">Истребитель демонов</p>
+                <p class="character-posts">28 постов с этим персонажем</p>
+                <a href="#" class="view-posts">Смотреть посты</a>
+            </div>
+        </div>
+
+        <div class="character-card">
+            <img src="luffy.jpg" alt="Манки Д. Луффи" class="character-image">
+            <div class="character-info">
+                <h3 class="character-name">Манки Д. Луффи</h3>
+                <p class="character-anime">Ван Пис</p>
+                <p class="character-posts">22 поста с этим персонажем</p>
+                <a href="#" class="view-posts">Смотреть посты</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="pagination">
+        <a href="#" class="page-number active">1</a>
+        <a href="#" class="page-number">2</a>
+        <a href="#" class="page-number">3</a>
+        <a href="#" class="page-number">4</a>
+        <a href="#" class="page-number">5</a>
+    </div>
+</div>

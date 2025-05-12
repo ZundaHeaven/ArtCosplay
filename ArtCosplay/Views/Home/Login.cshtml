@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "Авторизация";
+}
+
+<div class="login-container">
+    <h2 class="login-title">Вход в Art-Cosplay</h2>
+
+    <form>
+        <div class="form-group">
+            <label for="username">Имя пользователя или Email</label>
+            <input type="text" id="username" placeholder="Введите ваш логин или email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Пароль</label>
+            <input type="password" id="password" placeholder="Введите ваш пароль" required>
+        </div>
+
+        <div class="remember-forgot">
+            <div class="remember-me">
+                <input type="checkbox" id="remember">
+                <label for="remember">Запомнить меня</label>
+            </div>
+            <a href="#" class="forgot-password">Забыли пароль?</a>
+        </div>
+
+        <button type="submit" class="login-button">Войти</button>
+
+        <div class="login-links">
+            Еще нет аккаунта? <a href="register.html">Зарегистрируйтесь</a>
+        </div>
+        <a href="index.html" class="back-button"><i class="fas fa-arrow-left"></i> Назад на главную</a>
+    </form>
+</div>

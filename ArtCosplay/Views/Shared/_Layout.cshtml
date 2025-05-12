@@ -4,30 +4,34 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ArtCosplay</title>
+    <link rel="icon" href="/icon.ico">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ArtCosplay.styles.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Sans+MS&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-<body style=" display: flex; flex-direction: column; min-height: 100vh; ">
+<body style="background-color: #f0e6ff;background-image: url('/data/bg.jpg');background-size: cover;background-attachment: fixed;background-position: center;background-blend-mode: overlay;color: #333;display: flex !important;flex-direction: column !important;min-height: 100vh !important;">
     <div class="anime-decoration decoration-1">(≧▽≦)</div>
     <div class="anime-decoration decoration-2">♡(>ᴗ•)</div>
 
     <header>
         <div class="header-container">
             <div class="logo-container">
-                <div class="logo">Art-Cosplay</div>
-@*                 <div class="search-bar">
+                <a href="/" class="logo"  style="text-decoration: none;">Art-Cosplay</a>
+
+              @*<div class="search-bar">
                     <input type="text" placeholder="Поиск по сайту...">
                     <button><i class="fas fa-search"></i></button>
                 </div> *@
             </div>
             <nav>
                 <ul>
-                    <li><a href="#">Арты</a></li>
-                    <li><a href="#">Обсуждения</a></li>
-                    <li><a href="#">Барахолка</a></li>
-                    <li><a href="#">Каталог образов</a></li>
-                    <li><a href="#">Ваш Профиль</a></li>
+                    <li><a href="/Home/ArtPage">Арты</a></li>
+                    <li><a href="/Home/DiscusPage">Обсуждения</a></li>
+                    <li><a href="/Home/ShopPage">Барахолка</a></li>
+                    <li><a href="/Home/CharactersPage">Каталог образов</a></li>
+                    <li><a href="/Home/Profile">Ваш Профиль</a></li>
                 </ul>
             </nav>
         </div>
@@ -56,8 +60,6 @@
                 <h3>Полезные ссылки</h3>
                 <a href="#">Правила сайта</a>
                 <a href="#">FAQ</a>
-                <a href="#">Реклама на сайте</a>
-                <a href="#">Вакансии</a>
             </div>
         </div>
         <div class="copyright">

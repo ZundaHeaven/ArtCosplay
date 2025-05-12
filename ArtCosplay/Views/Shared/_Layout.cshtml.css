@@ -4,20 +4,7 @@
     box-sizing: border-box;
     font-family: 'Arial', sans-serif;
 }
-
-body {
-    background-color: #f0e6ff;
-    background-image: url('thumb-1920-913216.jpg');
-    background-size: cover;
-    background-attachment: fixed;
-    background-position: center;
-    background-blend-mode: overlay;
-    color: #333;
-    display: flex !important;
-    flex-direction: column !important;
-    min-height: 100vh !important;
-}
-        
+       
 header {
     background: linear-gradient(90deg, rgba(106, 17, 203, 0.9) 0%, rgba(37, 117, 252, 0.9) 100%);
     color: white;

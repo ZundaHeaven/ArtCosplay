@@ -1,5 +1,6 @@
-﻿using ArtCosplay.Models;
-using ArtCosplay.Models.DB;
+﻿using ArtCosplay.Data;
+using ArtCosplay.Data.DB;
+using ArtCosplay.Models;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
@@ -9,38 +10,39 @@ namespace ArtCosplay.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController(ILogger<HomeController> logger, AppDbContext appDbContext) : ControllerBase
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly AppDbContext _appDbContext;
-
-        public UserController(ILogger<HomeController> logger, AppDbContext appDbContext)
-        {
-            _logger = logger;
-            _appDbContext = appDbContext;
-        }
+        private readonly ILogger<HomeController> _logger = logger;
+        private readonly AppDbContext _appDbContext = appDbContext;
 
         [HttpGet]
         public ActionResult<List<User>> GetAllUsers()
         {
             try
             {
-                return Ok(_appDbContext.Users.Select(x =>
-                new {
-                    x.UserId,
-                    x.Username,
-                    x.AvatarUrl,
-                    x.Bio,
-                    x.IsCosplayer,
-                    x.IsArtist,
-                    x.IsSeller,
-                    x.LastLogin,
-                    x.RegistrationDate
-                }));
+                return Ok(new
+                {
+                    Status = "success",
+                    Users = _appDbContext.Users.Select(x => new 
+                    {
+                        x.UserId,
+                        x.Username,
+                        x.AvatarUrl,
+                        x.Bio,
+                        x.IsCosplayer,
+                        x.IsArtist,
+                        x.IsSeller,
+                        x.LastLogin,
+                        x.RegistrationDate
+                    })
+                });
             }
             catch (Exception ex)
             {
-                return NotFound("User not found");
+                return NotFound(new { 
+                    Status = "error",
+                    ex.Message
+                });
             }
         }
 
@@ -74,7 +76,7 @@ namespace ArtCosplay.Controllers
                 string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                     password: user.Password,
                     salt: Encoding.UTF8.GetBytes("ExampleSalt"),
-                    prf: KeyDerivationPrf.HMACSHA256,
+                    prf: KeyDerivationPrf.HMACSHA512,
                     iterationCount: 100000,
                     numBytesRequested: 256 / 8)
                 );
@@ -101,7 +103,7 @@ namespace ArtCosplay.Controllers
                 return BadRequest(new
                 {
                     Status = "error",
-                    Message = ex.Message
+                    ex.Message
                 });
                 
             }

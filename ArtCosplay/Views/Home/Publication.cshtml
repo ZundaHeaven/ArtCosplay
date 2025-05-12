@@ -1,0 +1,193 @@
+﻿@{
+    ViewData["Title"] = "Пост";
+}
+
+<div class="post-container">
+    <div class="post-navigation">
+        <a href="ArtPage" class="nav-button">
+            <i class="fas fa-arrow-left"></i> Назад к артам
+        </a>
+    </div>
+
+    <div class="post-content">
+        <div class="post-header">
+            <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Аватар" class="post-avatar">
+            <div class="post-user-info">
+                <div class="post-user">AnimeDreamer</div>
+                <div class="post-time">Опубликовано 3 часа назад</div>
+            </div>
+        </div>
+
+        <h1 class="post-title">Мой новый арт с Сакурой из Наруто</h1>
+
+        <img src="sakuraart.jpg" alt="Арт с Сакурой" class="post-image">
+
+        <p class="post-text">
+            Мой новый арт с Сакурой из Наруто! Рисовала в Clip Studio Paint около 8 часов. Как вам результат? 😊
+
+            Использовала следующие кисти:
+            - G-pen для контуров
+            - Watercolor для фона
+            - Airbrush для световых эффектов
+
+            Особенно долго пришлось работать над деталями её костюма и волосами. Хотелось передать динамику движения и эмоции персонажа.
+        </p>
+
+        <div class="post-tags">
+            <span class="post-tag">#naruto</span>
+            <span class="post-tag">#sakura</span>
+            <span class="post-tag">#digitalart</span>
+            <span class="post-tag">#fanart</span>
+            <span class="post-tag">#anime</span>
+        </div>
+
+        <div class="post-actions">
+            <div class="post-action">
+                <i class="far fa-thumbs-up"></i>
+                <span>56</span>
+            </div>
+            <div class="post-action">
+                <i class="far fa-comment"></i>
+                <span>23 комментария</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="comments-section">
+        <h2 class="comments-title">Комментарии (23)</h2>
+
+        <form class="comment-form">
+            <textarea class="comment-textarea" placeholder="Напишите ваш комментарий..."></textarea>
+            <button type="submit" class="comment-submit">Отправить</button>
+        </form>
+
+        <div class="comments-pagination-info">
+            Показаны комментарии 1-5 из 23
+        </div>
+
+        <div class="comment-list">
+            <div class="comment-item">
+                <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Аватар" class="comment-avatar">
+                <div class="comment-content">
+                    <div class="comment-header">
+                        <span class="comment-user">ArtLover42</span>
+                        <span class="comment-time">2 часа назад</span>
+                    </div>
+                    <p class="comment-text">Очень круто получилось! Особенно нравится как ты передала свет на волосах. Какие кисти использовала для этого эффекта?</p>
+                    <div class="comment-actions">
+                        <div class="comment-action">
+                            <i class="far fa-thumbs-up"></i>
+                            <span>5</span>
+                        </div>
+                        <div class="comment-action">
+                            <i class="fas fa-reply"></i>
+                            <span>Ответить</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comment-item">
+                <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Аватар" class="comment-avatar">
+                <div class="comment-content">
+                    <div class="comment-header">
+                        <span class="comment-user">DigitalPainter</span>
+                        <span class="comment-time">1 час назад</span>
+                    </div>
+                    <p class="comment-text">Отличная работа! Очень динамичная композиция. Только, по-моему, левая рука немного непропорциональна.</p>
+                    <div class="comment-actions">
+                        <div class="comment-action">
+                            <i class="far fa-thumbs-up"></i>
+                            <span>3</span>
+                        </div>
+                        <div class="comment-action">
+                            <i class="fas fa-reply"></i>
+                            <span>Ответить</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comment-item">
+                <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Аватар" class="comment-avatar">
+                <div class="comment-content">
+                    <div class="comment-header">
+                        <span class="comment-user">SakuraFan</span>
+                        <span class="comment-time">45 минут назад</span>
+                    </div>
+                    <p class="comment-text">Вау, это просто потрясающе! 😍 Можно ли использовать этот арт как аватарку с указанием авторства?</p>
+                    <div class="comment-actions">
+                        <div class="comment-action">
+                            <i class="far fa-thumbs-up"></i>
+                            <span>7</span>
+                        </div>
+                        <div class="comment-action">
+                            <i class="fas fa-reply"></i>
+                            <span>Ответить</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comment-item">
+                <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Аватар" class="comment-avatar">
+                <div class="comment-content">
+                    <div class="comment-header">
+                        <span class="comment-user">AnimeDreamer</span>
+                        <span class="comment-time">30 минут назад</span>
+                        <span style="margin-left: 10px; background: #6a11cb; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">Автор</span>
+                    </div>
+                    <p class="comment-text">SakuraFan Конечно можно! Рада, что тебе понравилось 😊 Только, пожалуйста, не удаляй подпись в углу.</p>
+                    <div class="comment-actions">
+                        <div class="comment-action">
+                            <i class="far fa-thumbs-up"></i>
+                            <span>2</span>
+                        </div>
+                        <div class="comment-action">
+                            <i class="fas fa-reply"></i>
+                            <span>Ответить</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comment-item">
+                <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Аватар" class="comment-avatar">
+                <div class="comment-content">
+                    <div class="comment-header">
+                        <span class="comment-user">MangaArtist</span>
+                        <span class="comment-time">15 минут назад</span>
+                    </div>
+                    <p class="comment-text">Прекрасная работа! Очень вдохновляет. Буду ждать новых работ с другими персонажами Наруто!</p>
+                    <div class="comment-actions">
+                        <div class="comment-action">
+                            <i class="far fa-thumbs-up"></i>
+                            <span>4</span>
+                        </div>
+                        <div class="comment-action">
+                            <i class="fas fa-reply"></i>
+                            <span>Ответить</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pagination">
+            <a href="#" class="page-number active">1</a>
+            <a href="#" class="page-number">2</a>
+            <a href="#" class="page-number">3</a>
+            <a href="#" class="page-number">4</a>
+            <a href="#" class="page-number">5</a>
+            <a href="#" class="page-number">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="post-navigation">
+        <a href="ArtPage" class="nav-button">
+            <i class="fas fa-arrow-left"></i> Назад к артам
+        </a>
+    </div>
+</div>

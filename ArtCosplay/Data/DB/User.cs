@@ -1,12 +1,8 @@
-﻿using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Xml.Linq;
 
-namespace ArtCosplay.Models.DB
+namespace ArtCosplay.Data.DB
 {
-
     public class User
     {
         [Key]
@@ -34,14 +30,12 @@ namespace ArtCosplay.Models.DB
         public bool IsCosplayer { get; set; }
         public bool IsSeller { get; set; }
 
-        // Навигационные свойства
-        public ICollection<Post> Posts { get; set; }
         public ICollection<Event> Events { get; set; }
         public ICollection<News> News { get; set; }
         public ICollection<Product> Products { get; set; }
+        public ICollection<Post> Posts { get; set; }
         public ICollection<Like> Likes { get; set; }
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Discussion> Discussions { get; set; }
-        public ICollection<DiscussionReply> DiscussionReplies { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-namespace ArtCosplay.Models.DB
+namespace ArtCosplay.Data.DB
 {
     public class ErrorViewModel
     {
