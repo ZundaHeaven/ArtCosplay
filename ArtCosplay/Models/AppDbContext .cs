@@ -1,5 +1,6 @@
 ﻿using ArtCosplay.Models.DB;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata;
 public class AppDbContext : DbContext
 {
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -25,6 +26,8 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<User>().HasIndex(u => new { u.Username, u.Email }).IsUnique();
+
         modelBuilder.Entity<Like>()
             .HasIndex(l => new { l.PostId, l.UserId })
             .IsUnique();

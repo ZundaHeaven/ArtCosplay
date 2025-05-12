@@ -12,17 +12,18 @@ namespace ArtCosplay.Models.DB
         [Key]
         public int UserId { get; set; }
 
-        [Required, MaxLength(50)]
+        [Required, MaxLength(50), Index(IsUnique = true)]
         public string Username { get; set; }
 
         [Required, MaxLength(100)]
         public string Email { get; set; }
 
-        [Required, MaxLength(255)]
+        [Required, MaxLength(256)]
         public string PasswordHash { get; set; }
 
         [MaxLength(255)]
         public string AvatarUrl { get; set; }
+        [MaxLength(100)]
 
         public string Bio { get; set; }
 
