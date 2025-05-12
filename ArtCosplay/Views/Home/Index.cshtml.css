@@ -19,8 +19,6 @@
     top: 85px;
 }
 
-
-
 .sidebar-title {
     font-size: 18px;
     margin-bottom: 15px;
@@ -55,7 +53,6 @@
     color: #777;
 }
         
-/* Center content - Recent posts */
 .main-content {
     display: grid;
     gap: 20px;
@@ -136,7 +133,6 @@
     text-decoration: underline;
 }
 
-/* Pagination */
 .pagination {
     display: flex;
     justify-content: center;
@@ -165,7 +161,6 @@
     transform: translateY(-3px);
 }
         
-/* News item styles */
 .news-item {
     margin-bottom: 15px;
     padding-bottom: 15px;

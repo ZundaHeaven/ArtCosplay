@@ -23,8 +23,8 @@ namespace ArtCosplay.Models.DB
 
         [MaxLength(255)]
         public string AvatarUrl { get; set; }
-        [MaxLength(100)]
 
+        [MaxLength(100)]
         public string Bio { get; set; }
 
         public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
