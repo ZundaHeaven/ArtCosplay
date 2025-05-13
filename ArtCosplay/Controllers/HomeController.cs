@@ -19,6 +19,8 @@ namespace ArtCosplay.Controllers
         public IActionResult CharactersPage() => View();
         public IActionResult Publication() => View();
         public IActionResult ShoppingItem() => View();
+        public IActionResult About() => View();
+        public IActionResult FAQ() => View();
         public IActionResult Rules() => View();
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
