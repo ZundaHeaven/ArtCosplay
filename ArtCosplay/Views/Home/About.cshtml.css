@@ -1,0 +1,182 @@
+﻿.about-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.hero-section {
+    text-align: center;
+    padding: 50px 20px;
+    background: linear-gradient(45deg, rgba(106,17,203,0.1), rgba(37,117,252,0.1));
+    border-radius: 20px;
+    margin-bottom: 60px;
+}
+
+.hero-title {
+    font-family: 'Comic Sans MS', cursive;
+    color: #6a11cb;
+    font-size: 2.8em;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+}
+
+.hero-subtitle {
+    font-size: 1.4em;
+    color: #444;
+}
+
+.mission-section, 
+.audience-section, 
+.features-section, 
+.team-section {
+    margin: 60px 0;
+    padding: 30px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+}
+
+.section-title {
+    font-family: 'Comic Sans MS', cursive;
+    color: #2575fc;
+    font-size: 2.2em;
+    text-align: center;
+    margin: 30px 0;
+}
+
+.features-list {
+    font-size: 1.1em;
+    line-height: 1.8;
+    padding-left: 0px;
+}
+
+.features-list p {
+    margin: 15px 0;
+    padding: 10px 20px;
+    background: rgba(106,17,203,0.05);
+    border-radius: 8px;
+}
+
+.features-list i {
+    color: #6a11cb;
+}
+
+.audience-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.audience-card {
+    padding: 25px;
+    border-radius: 15px;
+    background: white;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}   
+
+.card-icon {
+    font-size: 2.5em;
+    margin-bottom: 15px;
+    color: #6a11cb;
+}
+
+.feature-blocks {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin-top: 40px;
+}
+
+.feature-block {
+    padding: 25px;
+    border-radius: 15px;
+    color: white;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+}
+
+.gradient-purple { background: linear-gradient(45deg, #6a11cb, #9136d3); }
+.gradient-blue { background: linear-gradient(45deg, #2575fc, #4d8dfc); }
+.gradient-pink { background: linear-gradient(45deg, #ff6b6b, #ff8787); }
+
+.philosophy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.philosophy-item {
+    text-align: center;
+    padding: 30px;
+}
+
+.icon-box {
+    width: 80px;
+    height: 80px;
+    background: rgba(106,17,203,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+    margin: 0 auto 20px;
+}
+
+.cta-section {
+    text-align: center;
+    padding: 60px 20px;
+    margin: 80px 0;
+    background: linear-gradient(45deg, #6a11cb, #2575fc);
+    border-radius: 20px;
+    color: white;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 15px 40px;
+    background: white;
+    color: #6a11cb;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 25px;
+    transition: all 0.3s;
+}
+
+.cta-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.feature-item {
+    display: block;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    transition: transform 0.3s;
+}
+
+.feature-item:hover {
+    transform: translateX(10px);
+}
+
+@media (max-width: 768px) {
+    .audience-grid,
+    .feature-blocks,
+    .philosophy-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .hero-title {
+        font-size: 2em;
+    }
+    
+    .section-title {
+        font-size: 1.8em;
+    }
+}
