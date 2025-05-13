@@ -12,8 +12,6 @@ namespace ArtCosplay.Controllers
 
         public IActionResult Index() => View();
         public IActionResult Privacy() => View();
-        public IActionResult Registration() => View();
-        public IActionResult Login() => View();
         public IActionResult Profile() => View(); 
         public IActionResult ArtPage() => View();
         public IActionResult DiscusPage() => View();
@@ -23,6 +21,7 @@ namespace ArtCosplay.Controllers
         public IActionResult ShoppingItem() => View();
         public IActionResult About() => View();
         public IActionResult FAQ() => View();
+        public IActionResult Rules() => View();
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

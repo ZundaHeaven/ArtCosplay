@@ -17,7 +17,7 @@ namespace ArtCosplay.Data.DB
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [ForeignKey("User")]
-        public int AuthorId { get; set; }
+        public string AuthorId { get; set; }
         public User Author { get; set; }
 
         public ICollection<Comment> Comments { get; set; }

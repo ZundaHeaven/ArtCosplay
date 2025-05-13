@@ -23,7 +23,7 @@ namespace ArtCosplay.Data.DB
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [ForeignKey("User")]
-        public int SellerId { get; set; }
+        public string SellerId { get; set; }
         public User Seller { get; set; }
 
         public bool IsAvailable { get; set; } = true;

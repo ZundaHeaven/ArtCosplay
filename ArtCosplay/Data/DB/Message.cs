@@ -12,7 +12,7 @@ namespace ArtCosplay.Data.DB
         public Chat Chat { get; set; }
 
         [ForeignKey("User")]
-        public int SenderId { get; set; }
+        public string SenderId { get; set; }
         public User Sender { get; set; }
 
         [Required]

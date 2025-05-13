@@ -1,0 +1,38 @@
+﻿@model ArtCosplay.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Авторизация";
+}
+
+<div class="login-container">
+    <h2 class="login-title">Вход в Art-Cosplay</h2>
+
+    <form method="post" asp-controller="User" asp-action="Login">
+        <div asp-validation-summary="ModelOnly"></div>
+
+        <div class="form-group">
+            <label asp-for="UserName">Имя пользователя или Email</label>
+            <input type="text" asp-for="UserName" placeholder="Введите ваш логин" required>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Password">Пароль</label>
+            <input type="password" asp-for="Password" placeholder="Введите ваш пароль" required>
+        </div>
+
+        <div class="remember-forgot">
+            <div class="remember-me">
+                <input type="checkbox" asp-for="RememberMe">
+                <label asp-for="RememberMe">Запомнить меня</label>
+            </div>
+            <a href="#" class="forgot-password">Забыли пароль?</a>
+        </div>
+
+        <button type="submit" class="login-button">Войти</button>
+
+        <div class="login-links">
+            Еще нет аккаунта? <a href="@Url.ActionLink("Registration", "User")">Зарегистрируйтесь</a>
+        </div>
+        <a href="/" class="back-button"><i class="fas fa-arrow-left"></i> Назад на главную</a>
+    </form>
+</div>

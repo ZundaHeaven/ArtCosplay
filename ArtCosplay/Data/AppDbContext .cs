@@ -1,10 +1,25 @@
 ﻿using ArtCosplay.Data.DB;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+
 namespace ArtCosplay.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<User, IdentityRole, string>
     {
-        public AppDbContext(DbContextOptions options) : base(options) { }
+        public AppDbContext(DbContextOptions<AppDbContext> options)
+            : base(options) 
+        { 
+            Database.EnsureCreated();
+        }
+
+        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+        {
+            configurationBuilder.Properties<string>()
+                .HaveMaxLength(200);
+
+            base.ConfigureConventions(configurationBuilder);
+        }
 
         public AppDbContext() => Database.EnsureCreated();
 
@@ -23,7 +38,24 @@ namespace ArtCosplay.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().HasIndex(u => new { u.Username, u.Email }).IsUnique();
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<User>().ToTable("Users");
+            modelBuilder.Entity<IdentityRole>().ToTable("Roles");
+            modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
+
+            modelBuilder.Entity<User>().HasIndex(u => new { u.UserName, u.Email }).IsUnique();
+
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.Property(u => u.UserName)
+                    .HasMaxLength(20);
+
+                entity.Property(u => u.Email)
+                    .HasMaxLength(100);
+            });
 
             modelBuilder.Entity<Like>()
                 .HasIndex(l => new { l.PostId, l.UserId })
@@ -38,19 +70,67 @@ namespace ArtCosplay.Data
                 .WithOne(c => c.Post)
                 .OnDelete(DeleteBehavior.Cascade);
 
-             modelBuilder!.Entity<Comment>()
-                .HasCheckConstraint(
-                    "CK_Comment_Parents",
-                    "CASE WHEN PostId IS NOT NULL THEN 1 ELSE 0 END + CASE WHEN DiscussionId IS NOT NULL THEN 1 ELSE 0 END = 1"
-                );
+            modelBuilder.Entity<Discussion>()
+                .HasMany(p => p.Comments)
+                .WithOne(c => c.Discussion)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Like>()
-                .HasCheckConstraint(
-                    "CK_Like_Targets",
-                    "CASE WHEN PostId IS NOT NULL THEN 1 ELSE 0 END + " +
-                    "CASE WHEN CommentId IS NOT NULL THEN 1 ELSE 0 END + " +
-                    "CASE WHEN DiscussionId IS NOT NULL THEN 1 ELSE 0 END + "
-                );
+
+            modelBuilder.Entity<Event>(entity =>
+            {
+                entity.HasOne(e => e.Creator)
+                    .WithMany(u => u.Events)
+                    .HasForeignKey(e => e.CreatorId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<News>(entity =>
+            {
+                entity.HasOne(e => e.Author)
+                    .WithMany(u => u.News)
+                    .HasForeignKey(e => e.AuthorId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Product>(entity =>
+            {
+                entity.HasOne(e => e.Seller)
+                    .WithMany(u => u.Products)
+                    .HasForeignKey(e => e.SellerId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Post>(entity =>
+            {
+                entity.HasOne(e => e.Author)
+                    .WithMany(u => u.Posts)
+                    .HasForeignKey(e => e.AuthorId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Like>(entity =>
+            {
+                entity.HasOne(e => e.User)
+                    .WithMany(u => u.Likes)
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Comment>(entity =>
+            {
+                entity.HasOne(e => e.User)
+                    .WithMany(u => u.Comments)
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Discussion>(entity =>
+            {
+                entity.HasOne(e => e.Author)
+                    .WithMany(u => u.Discussions)
+                    .HasForeignKey(e => e.AuthorId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
         }
     }
 }

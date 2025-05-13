@@ -21,7 +21,7 @@ namespace ArtCosplay.Data.DB
         public DateTime? UpdatedAt { get; set; }
 
         [ForeignKey("User")]
-        public int AuthorId { get; set; }
+        public string AuthorId { get; set; }
         public User Author { get; set; }
 
         public ICollection<Like> Likes { get; set; }

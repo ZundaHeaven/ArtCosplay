@@ -3,19 +3,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ArtCosplay.Data.DB
 {
-    public class User
+    using Microsoft.AspNetCore.Identity;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
+    public class User : IdentityUser
     {
-        [Key]
-        public int UserId { get; set; }
+        [Required]
+        [MaxLength(20)]
+        public override string UserName { get; set; } 
 
-        [Required, MaxLength(50), Index(IsUnique = true)]
-        public string Username { get; set; }
-
-        [Required, MaxLength(100)]
-        public string Email { get; set; }
-
-        [Required, MaxLength(256)]
-        public string PasswordHash { get; set; }
+        [Required]
+        [MaxLength(100)]
+        public override string Email { get; set; }   
 
         [MaxLength(255)]
         public string AvatarUrl { get; set; }
