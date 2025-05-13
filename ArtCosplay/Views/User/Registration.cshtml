@@ -1,40 +1,43 @@
-﻿@{
+﻿@model ArtCosplay.Models.RegisterViewModel
+
+@{
     ViewData["Title"] = "Регистрация";
 }
 
 <div class="registration-container">
     <h2 class="registration-title">Регистрация в Art-Cosplay</h2>
 
-    <form>
+    <form method="post" asp-controller="User" asp-action="Registration">
+        <div asp-validation-summary="ModelOnly"></div>
         <div class="form-group">
             <label for="username">Имя пользователя</label>
-            <input type="text" id="username" placeholder="Придумайте никнейм" required>
+            <input type="text" asp-for="Name" placeholder="Придумайте никнейм" required>
         </div>
 
         <div class="form-group">
             <label for="email">Электронная почта</label>
-            <input type="email" id="email" placeholder="Введите ваш email" required>
+            <input type="email" asp-for="Email" placeholder="Введите ваш email" required>
         </div>
 
         <div class="form-row">
             <div class="form-group">
                 <label for="password">Пароль</label>
-                <input type="password" id="password" placeholder="Придумайте пароль" required>
+                <input type="password" asp-for="Password" placeholder="Придумайте пароль" required>
             </div>
             <div class="form-group">
                 <label for="confirm-password">Подтверждение пароля</label>
-                <input type="password" id="confirm-password" placeholder="Повторите пароль" required>
+                <input type="password" asp-for="PasswordConfirm" placeholder="Повторите пароль" required>
             </div>
         </div>
 
         <div class="form-group">
             <label for="about">О себе</label>
-            <textarea id="about" rows="4" placeholder="Расскажите немного о себе и своих интересах"></textarea>
+            <textarea asp-for="About" rows="4" placeholder="Расскажите немного о себе и своих интересах"></textarea>
         </div>
 
         <div class="form-group">
             <label>
-                <input type="checkbox" required> Я согласен с <a href="/Home/Rules">правилами сайта</a>
+                <input type="checkbox"> Я согласен с <a href="/Home/Rules">правилами сайта</a>
             </label>
         </div>
 

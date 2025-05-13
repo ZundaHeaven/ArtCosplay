@@ -13,11 +13,11 @@ namespace ArtCosplay.Data.DB
         public Product Product { get; set; }
 
         [ForeignKey("User")]
-        public int BuyerId { get; set; }
+        public string BuyerId { get; set; }
         public User Buyer { get; set; }
 
         [ForeignKey("User")]
-        public int SellerId { get; set; }
+        public string SellerId { get; set; }
         public User Seller { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

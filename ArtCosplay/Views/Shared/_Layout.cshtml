@@ -1,4 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@using ArtCosplay.Data.DB
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -19,21 +26,32 @@
         <div class="header-container">
             <div class="logo-container">
                 <a href="/" class="logo"  style="text-decoration: none;">Art-Cosplay</a>
-
-              @*<div class="search-bar">
-                    <input type="text" placeholder="Поиск по сайту...">
-                    <button><i class="fas fa-search"></i></button>
-                </div> *@
             </div>
             <nav>
-                <ul>
-                    <li><a href="/Home/ArtPage">Арты</a></li>
-                    <li><a href="/Home/DiscusPage">Обсуждения</a></li>
-                    <li><a href="/Home/ShopPage">Барахолка</a></li>
-                    <li><a href="/Home/CharactersPage">Каталог образов</a></li>
-                    <li><a href="/Home/Profile">Ваш Профиль</a></li>
-                </ul>
+                <a class="nav-item" href="@Url.Action("ArtPage", "Home")">Арты</a>
+                <a class="nav-item" href="@Url.Action("DiscusPage", "Home")">Обсуждения</a>
+                <a class="nav-item" href="@Url.Action("ShopPage", "Home")">Барахолка</a>
+                <a class="nav-item" href="@Url.Action("CharactersPage", "Home")">Каталог образов</a>
             </nav>
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <div style="margin: 5px;">
+                    <form method="post" asp-controller="User" asp-action="Logout" style="display: inline;">
+                        <input class="nav-item" type="submit" value="Выйти" />
+                    </form>
+                    <a class="nav-item" style="padding: 18px;" href="@Url.Action("Profile", "Home")">
+                        @UserManager.GetUserName(User)
+                        <img class="avatar" src="@((await UserManager.GetUserAsync(User))!.AvatarUrl)" alt="Аватар" />
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div style="margin: 15px;">
+                    <a class="nav-item" href="@Url.Action("Registration", "User")">Регистрация</a>
+                    <a class="nav-item" href="@Url.Action("Login", "User")">Авторизация</a>
+                </div>
+            }
         </div>
     </header>
 
@@ -48,7 +66,7 @@
             <div class="footer-column">
                 <h3>О нас</h3>
                 <p>Art-Cosplay - это сообщество любителей аниме, косплея и искусства. Мы объединяем творческих людей с 2025 года.</p>
-                <a href="#">Подробнее</a>
+                <a href="@Url.Action("About", "Home")">Подробнее</a>
             </div>
             <div class="footer-column">
                 <h3>Контакты</h3>
@@ -58,8 +76,8 @@
             </div>
             <div class="footer-column">
                 <h3>Полезные ссылки</h3>
-                <a href="#">Правила сайта</a>
-                <a href="#">FAQ</a>
+                <a href="@Url.Action("Rules", "Home")">Правила сайта</a>
+                <a href="@Url.Action("FAQ", "Home")">FAQ</a>
             </div>
         </div>
         <div class="copyright">
