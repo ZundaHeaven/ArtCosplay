@@ -23,5 +23,7 @@ namespace ArtCosplay.Data.DB
         public User User { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public ICollection<Like> Likes { get; set; }
     }
 }

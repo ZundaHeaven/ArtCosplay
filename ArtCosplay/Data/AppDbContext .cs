@@ -38,15 +38,12 @@ namespace ArtCosplay.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<User>().ToTable("Users");
             modelBuilder.Entity<IdentityRole>().ToTable("Roles");
             modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
 
             modelBuilder.Entity<User>().HasIndex(u => new { u.UserName, u.Email }).IsUnique();
-
-            base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<User>(entity =>
             {
@@ -126,11 +123,24 @@ namespace ArtCosplay.Data
 
             modelBuilder.Entity<Discussion>(entity =>
             {
-                entity.HasOne(e => e.Author)
-                    .WithMany(u => u.Discussions)
-                    .HasForeignKey(e => e.AuthorId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(d => d.Author)
+                  .WithMany(u => u.Discussions)
+                  .HasForeignKey(d => d.AuthorId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasMany(d => d.Comments)
+                      .WithOne(c => c.Discussion)
+                      .HasForeignKey(c => c.DiscussionId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasMany(d => d.Likes)
+                      .WithOne(l => l.Discussion)
+                      .HasForeignKey(l => l.DiscussionId)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
+
+            base.OnModelCreating(modelBuilder);
+
         }
     }
 }

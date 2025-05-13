@@ -4,6 +4,14 @@
     padding: 0 20px;
 }
 
+.about-content {
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    max-width: 1000px;
+    margin: auto;
+}
+
 .hero-section {
     text-align: center;
     padding: 50px 20px;
