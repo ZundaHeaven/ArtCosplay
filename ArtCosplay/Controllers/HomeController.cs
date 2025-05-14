@@ -26,6 +26,7 @@ namespace ArtCosplay.Controllers
         public IActionResult About() => View();
         public IActionResult FAQ() => View();
         public IActionResult Rules() => View();
+        public IActionResult ProfileChange() => View();
 
 
         [HttpPost]
