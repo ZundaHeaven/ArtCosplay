@@ -1,0 +1,46 @@
+﻿<div class="main-container">
+    <main class="main-content">
+        <div class="edit-profile">
+            <form class="edit-form" id="editForm">
+                <div class="form-group">
+                    <label class="form-label" for="username">Никнейм:</label>
+                    <input type="text" id="username" class="form-input" value="Sakura_Cos">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Электронная почта:</label>
+                    <input type="email" id="email" class="form-input" value="sakura@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="bio">Описание профиля:</label>
+                    <textarea id="bio" class="form-input" rows="4">Люблю аниме, косплей и рисование. Участвую в конкурсах с 2023 года.</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Аватар:</label>
+                    <div class="avatar-upload">
+                        <img src="sakuraart.jpg" class="avatar-preview" id="avatarPreview">
+                        <div class="file-input">
+                            <input type="file" id="avatar" accept="image/*">
+                            <label for="avatar">Выбрать файл</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="currentPassword">Текущий пароль:</label>
+                    <input type="password" id="currentPassword" class="form-input">
+                    <p class="password-note">*Оставьте пустым, если не хотите менять пароль</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="newPassword">Новый пароль:</label>
+                    <input type="password" id="newPassword" class="form-input">
+                </div>
+
+                <button type="submit" class="profile-button">Сохранить изменения</button>
+            </form>
+        </div>
+    </main>
+</div>

@@ -5,9 +5,9 @@ namespace ArtCosplay.Models
     public class CommentViewModel
     {
         [Required]
-        public int Id;
+        public int Id { get; set; }
         [Required]
-        [MaxLength(250)]
-        public string Content { get; set; }
+        [MaxLength(300)]
+        public string Content {  get; set; }
     }
 }
