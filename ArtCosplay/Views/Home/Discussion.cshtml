@@ -1,4 +1,6 @@
-﻿@using ArtCosplay.Data
+﻿@model CommentViewModel
+
+@using ArtCosplay.Data
 @using ArtCosplay.Data.DB
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
@@ -18,6 +20,14 @@
         .Include(d => d.Comments)
         .Include(d => d.Likes)
         .FirstOrDefault(i => i.DiscussionId == discussionId);
+
+    List<Comment> comments = DbContext.Comments
+        .Include(d => d.Likes)
+        .Include(d => d.User)
+        .Where(i => i.DiscussionId == discussionId)
+        .OrderByDescending(x => x.CommentId)
+        .ToList();
+
 
     if (page <= 0)
         page = 1;
@@ -62,10 +72,22 @@
     <div class="comments-section">
         <h2 class="comments-title">Комментарии (@discussion.Comments.Count)</h2>
 
-        <form class="comment-form">
-            <textarea class="comment-textarea" placeholder="Напишите ваш комментарий..."></textarea>
-            <button type="submit" class="comment-submit">Отправить</button>
-        </form>
+        <div class="comment-form">
+            <input type="hidden" id="discussion-id" value="@discussionId" />
+            <textarea class="comment-textarea" placeholder="Напишите ваш комментарий..." id="comment-textarea" maxlength="300" style="
+                display: block;
+                width: 100%;
+                border-radius: 12px;
+                margin-bottom: 15px;
+                height: 80px;
+                border: none;
+                outline: none;
+                box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.1);
+                padding: 5px;
+            "
+            ></textarea>
+            <button type="submit" class="comment-submit" style="width: 100%; margin-bottom: 10px;" id="comment-send">Отправить</button>
+        </div>
 
         <div class="comments-pagination-info">
             Показаны комментарии 1-5 из @discussion.Comments.Count
@@ -74,7 +96,7 @@
         <div class="comment-list">
             @if (@discussion.Comments.Count != 0)
             {
-                @foreach (var comment in @discussion.Comments)
+                @foreach (var comment in comments.Chunk(5).ElementAt(page - 1))
                 {
                     <div class="comment-item">
                         <img src="@comment.User.AvatarUrl" alt="Аватар" class="comment-avatar">
@@ -100,7 +122,7 @@
                 <div class="pagination">
                     @for (int i = page - 2 <= 0 ? 1 : page - 2; i <= discussion.Comments.Count / 5 + 1; ++i)
                     {
-                        <a href="#" class="page-number@(i == page ? " active" : string.Empty)">i</a>
+                        <a href="#" class="page-number@(i == page ? " active" : string.Empty)">@i</a>
                     }
                     @if(discussion.Comments.Count / 5.0 > 1.0)
                     {
@@ -117,3 +139,30 @@
         </div>
     </div>
 </div>
+
+<script>
+    function addComment()
+    {
+        contentBox = document.getElementById('comment-textarea');
+
+        fetch('/User/DiscussionComment', {
+            method : 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify({
+                Id: document.getElementById('discussion-id').value,
+                Content : contentBox.value
+            })
+        })
+        .then(response => response.json())
+        .then(json => {
+            if (json['status'] == 'success') {
+                alert('NICE');
+            }
+        });
+    }
+
+    var button = document.getElementById('comment-send');
+    button.onclick = addComment;
+</script>

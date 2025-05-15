@@ -1,8 +1,10 @@
 ﻿using ArtCosplay.Data;
 using ArtCosplay.Data.DB;
 using ArtCosplay.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Data.Entity;
 
 namespace ArtCosplay.Controllers
 {
@@ -42,7 +44,8 @@ namespace ArtCosplay.Controllers
             catch (Exception ex)
             {
                 _logger.LogInformation("Error while fetching users");
-                return NotFound(new { 
+                return NotFound(new
+                {
                     Status = "error",
                     ex.Message
                 });
@@ -67,7 +70,7 @@ namespace ArtCosplay.Controllers
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("Login complete!");
-                     return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Home");
                 }
                 else
                 {
@@ -88,14 +91,15 @@ namespace ArtCosplay.Controllers
             {
                 var users = _appDbContext.Users.Where(x => x.UserName == model.Name || x.Email == model.Email);
 
-                if(users.Any())
+                if (users.Any())
                 {
                     ModelState.AddModelError(string.Empty, "Пользователь с таким именем или email уже существует!");
                     return View(model);
-                } 
+                }
 
-                User user = new User { 
-                    Email = model.Email, 
+                User user = new User
+                {
+                    Email = model.Email,
                     UserName = model.Name,
                     Bio = model.About,
                     AvatarUrl = $"/data/placeholder.jpg"
