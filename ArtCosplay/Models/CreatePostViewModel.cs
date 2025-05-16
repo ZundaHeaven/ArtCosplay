@@ -19,7 +19,6 @@ namespace ArtCosplay.Models
         public string Type { get; set; }
 
         [Required]
-        [MaxLength(50)]
-        public string ImageUrl { get; set; }
+        public IFormFile Image { get; set; }
     }
 }

@@ -16,6 +16,8 @@ namespace ArtCosplay.Data.DB
 
         [MaxLength(255)]
         public string ImageUrl { get; set; }
+        [Required]
+        public string Type { get; set; }
 
         [Required]
         [MaxLength(20)]
