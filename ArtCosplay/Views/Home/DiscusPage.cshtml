@@ -11,25 +11,59 @@
     ViewData["Title"] = "Обсуждения";
 
     int discussionId = Convert.ToInt32(ViewData["DiscussionId"]);
-    int page = Convert.ToInt32(ViewData["Page"] ?? 1);
 
+    Console.WriteLine("SADFDSFDSFSD " + ViewData["Page"]);
+
+    int page = Convert.ToInt32(ViewData["Page"] ?? 1);
+    string? filter = null;
     var discussions = DbContext.Discussions
         .Include(d => d.Author)
         .Include(d => d.Comments)
         .Include(d => d.Likes)
-        .OrderByDescending(x => x.CreatedAt);
+        .OrderByDescending(x => x.CreatedAt)
+        .ToList();
+
+    if (ViewData["Filter"] != null)
+    {
+        filter = ViewData["Filter"].ToString();
+        discussions = discussions.Where(x => x.Content.ToLower().Contains(filter.ToLower()) || x.Title.ToLower().Contains(filter.ToLower()))
+            .ToList();
+    }
+
+    int maxPage = Convert.ToInt32(Math.Ceiling(discussions.ToList().Count / 5.0));
+    if (page > maxPage)
+    {
+        page = maxPage;
+    }
+    else if(page <= 0)
+    {
+        page = 1;
+    }
+
+    var toShow = new List<Discussion>();
+    var chunks = discussions.Chunk(5);
+
+    if (chunks.Count() != 0)
+    {
+        toShow = chunks.ElementAt(page - 1).ToList();
+    }
 }
 
 <div class="discussions-container">
     <div class="discussions-list">
         <h1 class="discussions-title">Обсуждения</h1>
 
-        <div class="discussions-search">
-            <input type="text" placeholder="Поиск по обсуждениям...">
-            <button><i class="fas fa-search"></i> Найти</button>
-        </div>
+        
+        <form method="GET" asp-action="DiscusPage" asp-controller="Home">
+            <div class="discussions-search">
+                <input type="hidden" name="page" value="1">
+                <input type="text" name="filter" placeholder="Поиск по обсуждениям..." value="@(filter ?? "")">
+                <button type="submit"><i class="fas fa-search"></i> Найти</button>
+            </div>
+        </form>
+        
 
-        @foreach(var discussion in discussions)
+        @foreach (var discussion in toShow)
         {
             <a href="/Home/Discussion/@discussion.DiscussionId" style="text-decoration: none;">
                 <div class="discussion-item">
@@ -60,14 +94,29 @@
                 </div>
             </a>
         }
+        @if(discussions.Count != 0)
+        {
+            <div class="pagination">
+                @if (page != 1)
+                {
+                    <a href="@Url.Action("DiscusPage", "Home", new {page = page - 1, filter = filter})" class="page-number">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                }
+                <p class="page-number active">@(page)</p>
+                @if (page != maxPage)
+                {
+                    <a href="@Url.Action("DiscusPage", "Home", new {page = page + 1, filter = filter})" class="page-number">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                }
+            </div>
+        }
+        else
+        {
+            <span>Нет ещё обсуждений!</span>
+        }
 
-        <div class="pagination">
-            <a href="#" class="page-number active">1</a>
-            <a href="#" class="page-number">2</a>
-            <a href="#" class="page-number">3</a>
-            <a href="#" class="page-number">4</a>
-            <a href="#" class="page-number">5</a>
-        </div>
     </div>
 
     @if (SignInManager.IsSignedIn(User))

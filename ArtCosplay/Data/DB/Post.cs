@@ -17,6 +17,10 @@ namespace ArtCosplay.Data.DB
         [MaxLength(255)]
         public string ImageUrl { get; set; }
 
+        [Required]
+        [MaxLength(20)]
+        public string Type { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
 

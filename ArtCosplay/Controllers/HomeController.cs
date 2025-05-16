@@ -17,8 +17,13 @@ namespace ArtCosplay.Controllers
         public IActionResult Index() => View();
         public IActionResult Privacy() => View();
         public IActionResult Profile() => View(); 
-        public IActionResult ArtPage() => View();
-        public IActionResult DiscusPage() => View();
+        public IActionResult ArtPage(ArtPageFindViewModel model) => View(model);
+        public IActionResult DiscusPage(int? page, string? filter)
+        {
+            ViewData["Filter"] = filter;
+            ViewData["Page"] = page ?? 1;
+            return View();
+        }
         public IActionResult ShopPage() => View();
         public IActionResult CharactersPage() => View();
         public IActionResult Publication() => View();

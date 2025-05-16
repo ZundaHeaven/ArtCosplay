@@ -1,153 +1,178 @@
-﻿@{
+﻿@using ArtCosplay.Data
+@using ArtCosplay.Data.DB
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using ArtCosplay.Models
+
+@model ArtPageFindViewModel
+
+@inject AppDbContext DbContext
+@inject SignInManager<User> SignInManager
+
+@{
     ViewData["Title"] = "Арты/Косплеи";
+
+    int postId = Convert.ToInt32(ViewData["postId"]);
+
+    int page = Model.Page ?? 1;
+    var posts = DbContext.Posts
+        .Include(d => d.Author)
+        .Include(d => d.Comments)
+        .Include(d => d.Likes)
+        .OrderByDescending(x => x.CreatedAt)
+        .ToList();
+
+    if (Model.Filter != null)
+    {
+        posts = posts.Where(x => x.Content.ToLower().Contains(Model.Filter.ToLower()) || x.Title.ToLower().Contains(Model.Filter.ToLower()))
+            .ToList();
+    }
+
+    int maxPage = Convert.ToInt32(Math.Ceiling(posts.ToList().Count / 5.0));
+    if (page > maxPage)
+    {
+        page = maxPage;
+    }
+    else if (page <= 0)
+    {
+        page = 1;
+    }
+
+    var toShow = new List<Post>();
+    var chunks = posts.Chunk(5);
+
+    if (chunks.Count() != 0)
+    {
+        toShow = chunks.ElementAt(page - 1).ToList();
+    }
 }
 
 <div class="arts-container">
     <div class="arts-list">
         <h1 class="arts-title">Арты и косплеи</h1>
 
-        <div class="arts-search">
-            <input type="text" placeholder="Поиск по артам и косплеям...">
-            <button><i class="fas fa-search"></i> Найти</button>
-        </div>
+        <form asp-action="ArtPage" asp-controller="Home" method="get">
+            <div class="arts-search">
+                <input type="text" placeholder="Поиск по артам и косплеям..." asp-for="Filter" class="input-search">
+                <button type="submit"><i class="fas fa-search"></i> Найти</button>
+            </div>
 
-        <div class="arts-filters">
-            <button class="filter-tab active">Все</button>
-            <button class="filter-tab">Арты</button>
-            <button class="filter-tab">Косплеи</button>
+            <div class="arts-filters">
+                <label class="filter-tab">
+                    <input type="radio" value="" asp-for="FilterType" style="display: none;">
+                    <span>Все</span>
+                </label>
 
-            <select class="filter-select">
-                <option value="">Все теги</option>
-                <option value="digital">Digital Art</option>
-                <option value="traditional">Традиционное</option>
-                <option value="fanart">Фан-арт</option>
-                <option value="original">Оригинальные работы</option>
-            </select>
+                <label class="filter-tab">
+                    <input type="radio" value="art" asp-for="FilterType" style="display: none;">
+                    <span>Арты</span>
+                </label>
+                <label class="filter-tab">
+                    <input type="radio" value="cosplay" asp-for="FilterType" style="display: none;">
+                    <span>Косплеи</span>
+                </label>
 
-            <select class="filter-select">
-                <option value="">Сначала новые</option>
-                <option value="popular">Сначала популярные</option>
-                <option value="comments">Сначала обсуждаемые</option>
-            </select>
-        </div>
+                <select class="filter-select" asp-for="Sort">
+                    <option value="">Сначала новые</option>
+                    <option value="popular">Сначала популярные</option>
+                    <option value="comments">Сначала обсуждаемые</option>
+                </select>
+            </div>
+        </form>
 
-        <div class="art-item">
-            <div class="art-header">
-                <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Аватар" class="art-avatar">
-                <div>
-                    <span class="art-user">AnimeDreamer</span>
-                    <span class="art-time">3 часа назад</span>
+        @foreach(var item in toShow)
+        {
+            <div class="art-item">
+                <div class="art-header">
+                    <img src="@item.Author.AvatarUrl" alt="Аватар" class="art-avatar">
+                    <div>
+                        <span class="art-user">@item.Author.UserName</span>
+                        <span class="art-time">@item.CreatedAt</span>
+                    </div>
+                </div>
+                <img src="@item.ImageUrl" alt="Арт" class="art-image">
+                <p class="art-text">@item.Title</p>
+                @*                 <div class="art-tags">
+                    <span class="art-tag">#naruto</span>
+                    <span class="art-tag">#sakura</span>
+                    <span class="art-tag">#digitalart</span>
+                </div> *@
+                <div class="art-actions">
+                    <div class="art-action">
+                        <i class="far fa-thumbs-up"></i>
+                        <span>@item.Likes.Count</span>
+                    </div>
+                    <div class="art-action">
+                        <i class="far fa-comment"></i>
+                        <span>@item.Comments.Count</span>
+                    </div>
                 </div>
             </div>
-            <img src="7700e2751f5cccf07a581f23a64cca58.jpg" alt="Арт с Сакурой" class="art-image">
-            <p class="art-text">Мой новый арт с Сакурой из Наруто! Рисовала в Clip Studio Paint около 8 часов. Как вам результат? 😊</p>
-            <div class="art-tags">
-                <span class="art-tag">#naruto</span>
-                <span class="art-tag">#sakura</span>
-                <span class="art-tag">#digitalart</span>
-            </div>
-            <div class="art-actions">
-                <div class="art-action">
-                    <i class="far fa-thumbs-up"></i>
-                    <span>56</span>
-                </div>
-                <div class="art-action">
-                    <i class="far fa-comment"></i>
-                    <span>23</span>
-                </div>
-            </div>
-        </div>
+        }
 
-        <div class="art-item">
-            <div class="art-header">
-                <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Аватар" class="art-avatar">
-                <div>
-                    <span class="art-user">CosplayQueen</span>
-                    <span class="art-time">6 часов назад</span>
-                </div>
+        @if (posts.Count != 0)
+        {
+            <div class="pagination">
+                @if (page != 1)
+                {
+                    <a href="@Url.Action("DiscusPage", "Home", new ArtPageFindViewModel {Page = page - 1, Filter = Model.Filter, FilterType = Model.FilterType, Sort = Model.Sort})" class="page-number">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                }
+                <p class="page-number active">@(page)</p>
+                @if (page != maxPage)
+                {
+                    <a href="@Url.Action("DiscusPage", "Home", new ArtPageFindViewModel {Page = page + 1, Filter = Model.Filter, FilterType = Model.FilterType, Sort = Model.Sort})" class="page-number">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                }
             </div>
-            <img src="MIKU_SP.png" alt="Косплей на Хацунэ Мику" class="art-image">
-            <p class="art-text">Мой косплей на Хацунэ Мику! Парик делала сама из синтетических волокон, костюм шила по собственным выкройкам. Фото сделано на AnimeCon 2024.</p>
-            <div class="art-tags">
-                <span class="art-tag">#vocaloid</span>
-                <span class="art-tag">#miku</span>
-                <span class="art-tag">#cosplay</span>
-            </div>
-            <div class="art-actions">
-                <div class="art-action">
-                    <i class="far fa-thumbs-up"></i>
-                    <span>56</span>
-                </div>
-                <div class="art-action">
-                    <i class="far fa-comment"></i>
-                    <span>23</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="art-item">
-            <div class="art-header">
-                <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Аватар" class="art-avatar">
-                <div>
-                    <span class="art-user">DigitalArtist</span>
-                    <span class="art-time">1 день назад</span>
-                </div>
-            </div>
-            <img src="8e7c8c41f09314f658d115c6b1cea306.jpg" alt="Арт с Леви" class="art-image">
-            <p class="art-text">Портрет Леви из Атаки Титанов. Экспериментировал с новыми кистями в Photoshop. Особенно горжусь проработкой металла на его оборудовании.</p>
-            <div class="art-tags">
-                <span class="art-tag">#attackontitan</span>
-                <span class="art-tag">#levi</span>
-                <span class="art-tag">#fanart</span>
-            </div>
-            <div class="art-actions">
-                <div class="art-action">
-                    <i class="far fa-thumbs-up"></i>
-                    <span>56</span>
-                </div>
-                <div class="art-action">
-                    <i class="far fa-comment"></i>
-                    <span>23</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="pagination">
-            <a href="#" class="page-number active">1</a>
-            <a href="#" class="page-number">2</a>
-            <a href="#" class="page-number">3</a>
-            <a href="#" class="page-number">4</a>
-            <a href="#" class="page-number">5</a>
-        </div>
+        }
+        else
+        {
+            <span>Нет ещё артов!</span>
+        }
     </div>
-
-    <aside class="create-art">
-        <h2 class="create-title">Создать новый пост</h2>
-        <form>
-            <div class="form-group">
-                <label for="art-title">Заголовок</label>
-                <input type="text" id="art-title" placeholder="Название вашего арта/косплея">
-            </div>
-
-            <div class="file-upload">
-                <div class="file-upload-icon">
-                    <i class="fas fa-cloud-upload-alt"></i>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <aside class="create-art">
+            <h2 class="create-title">Создать новый пост</h2>
+            <form method="post" asp-action="ArtPage" asp-controller="Home">
+                <div class="form-group">
+                    <label for="art-title">Заголовок</label>
+                    <input name="Title" type="text" id="art-title" placeholder="Название вашего арта/косплея">
                 </div>
-                <span>Перетащите сюда изображение или кликните для загрузки</span>
-                <input type="file" id="art-file" style="display: none;">
-            </div>
 
-            <div class="form-group">
-                <label for="art-text">Описание</label>
-                <textarea id="art-text" placeholder="Расскажите о своем творении, используемых материалах и т.д."></textarea>
-            </div>
-@* 
+                <div class="file-upload">
+                    <div class="file-upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <span>Перетащите сюда изображение или кликните для загрузки</span>
+                    <input name="ImageUrl" type="file" id="art-file" style="display: none;">
+                </div>
+
+                <div class="form-group">
+                    <label name="Content" for="art-text">Описание</label>
+                    <textarea id="art-text" placeholder="Расскажите о своем творении, используемых материалах и т.д."></textarea>
+                </div>
+                @* 
             <div class="form-group">
                 <label for="art-tags">Теги (через запятую)</label>
                 <input type="text" id="art-tags" placeholder="например: косплей, арт, digital, акварель">
             </div> *@
 
-            <button type="submit" class="submit-btn">Опубликовать</button>
-        </form>
-    </aside>
+                <div class="post-type" style="margin-bottom: 10px">
+                    <label class="filter-tab">
+                        <input type="radio" value="art" name="Type" style="display: none;">
+                        <span>Арт</span>
+                    </label>
+                    <label class="filter-tab">
+                        <input type="radio" value="cosplay" name="Type" style="display: none;">
+                        <span>Косплей</span>
+                    </label>
+                </div>
+                <button type="submit" class="submit-btn">Опубликовать</button>
+            </form>
+        </aside>
+    }
 </div>

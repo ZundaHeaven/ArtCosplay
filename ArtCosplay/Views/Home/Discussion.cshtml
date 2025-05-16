@@ -56,7 +56,7 @@
             </div>
             @if(SignInManager.IsSignedIn(User))
             {
-                if (discussion.AuthorId == user.Id)
+                if (discussion.AuthorId == user.Id || await UserManager.IsInRoleAsync(user, "Admin") || await UserManager.IsInRoleAsync(user, "Moderator"))
                 {
                     <i class="fa-solid fa-trash discussion-action" id="delete-post" style="margin-top: -45px;"></i>
                 }
@@ -118,11 +118,11 @@
                         <img src="@comment.User.AvatarUrl" alt="Аватар" class="comment-avatar">
                         <div class="comment-content">
                             <div class="comment-header">
-                                <span class="comment-user">@@@comment.User.UserName</span>
+                                <span class="comment-user">@comment.User.UserName</span>
                                 <span class="comment-time">@comment.CreatedAt</span>
                                 @if (SignInManager.IsSignedIn(User))
                                 {
-                                    if (discussion.AuthorId == user.Id)
+                                    if (discussion.AuthorId == user.Id || await UserManager.IsInRoleAsync(user, "Admin") || await UserManager.IsInRoleAsync(user, "Moderator"))
                                     {
                                         <i class="fa-solid fa-trash discussion-action" name="delete-comment" style="margin-left: auto;" comment-id="@comment.CommentId"></i>
                                     }
