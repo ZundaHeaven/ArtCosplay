@@ -1,18 +1,24 @@
 using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
 using ArtCosplay.Data;
 using ArtCosplay.Data.DB;
 using ArtCosplay.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Common;
 
 namespace ArtCosplay.Controllers
 {
-    public class HomeController(ILogger<HomeController> logger, AppDbContext appDbContext, UserManager<User> userManager, SignInManager<User> signInManager) : Controller
+    public class HomeController(ILogger<HomeController> logger, 
+        AppDbContext appDbContext, 
+        UserManager<User> userManager, 
+        IWebHostEnvironment appEnvironment) : Controller
     {
         private readonly ILogger<HomeController> _logger = logger;
         private readonly AppDbContext _appDbContext = appDbContext;
         private readonly UserManager<User> _userManager = userManager;
-        private readonly SignInManager<User> _signInManager = signInManager;
+        private readonly IWebHostEnvironment _appEnvironment = appEnvironment;
 
         public IActionResult Index() => View();
         public IActionResult Privacy() => View();
@@ -28,29 +34,125 @@ namespace ArtCosplay.Controllers
         public IActionResult Rules() => View();
         public IActionResult ProfileChange() => View();
 
+        [HttpPost]
+        public async Task<IActionResult> ArtPage(CreatePostViewModel model)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+
+                if (user == null) return BadRequest(new
+                {
+                    Status = "error",
+                    Message = "User is null"
+                });
+
+                if (!ModelState.IsValid) return BadRequest(new
+                {
+                    Status = "error",
+                    Message = "Validation error"
+                });
+
+                if (model.Image.Length > 4096 * 1024) return BadRequest(new
+                {
+                    Status = "error",
+                    Message = "File size is more than 4MB"
+                });
+
+                List<string> acceptableExtensions =
+                    [".jpg", ".jpeg", ".png", ".webp"];
+
+                string extension = Path.GetExtension(model.Image.FileName);
+
+                if (!(acceptableExtensions.Contains(extension) 
+                    && model.Image.ContentType.ToLower().Contains("image"))) return BadRequest(new
+                {
+                    Status = "error",
+                    Message = "File format is not supported"
+                });
+
+                string path;
+                using (SHA256 mySHA256 = SHA256.Create())
+                {
+                    byte[] hash = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(model.Image.FileName + DateTime.Now.ToString()));
+                     path = "/Posts/" + Encoding.UTF8.GetString(hash) + extension;
+                }
+
+                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                {
+                    await model.Image.CopyToAsync(fileStream);
+                }
+
+                var entity = _appDbContext.Posts.Add(new Post
+                {
+                    Title = model.Title,
+                    Content = model.Content,
+                    ImageUrl = path,
+                    Type = model.Type,
+                    AuthorId = user.Id
+                }).Entity;
+
+                _appDbContext.SaveChanges();
+
+                return RedirectToAction("Post", "Home", new { id = entity.PostId });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(500, new
+                {
+                    Status = "error",
+                    Message = "Server error"
+                });
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> DiscusPage(CreateDiscusViewModel model)
         {
-            var user = await _userManager.GetUserAsync(User);
-
-            if (!ModelState.IsValid)
+            try
             {
-                ModelState.AddModelError(string.Empty, "Неверная валидация!");
-                return View(model);
+                var user = await _userManager.GetUserAsync(User);
+
+                if (user == null) return BadRequest(new
+                {
+                    Status = "error",
+                    Message = "User is null"
+                });
+
+                if (!ModelState.IsValid)
+                {
+                    ModelState.AddModelError(string.Empty, "Неверная валидация!");
+                    return View(model);
+                }
+
+                Discussion discussion = new Discussion
+                {
+                    AuthorId = user.Id,
+                    Title = model.Title,
+                    Content = model.Content
+                };
+
+                var entity = _appDbContext.Add(discussion).Entity;
+                _appDbContext.SaveChanges();
+                _logger.LogInformation($"New discussion was added with id: {entity.DiscussionId} by {entity.AuthorId}");
+                return RedirectToAction("Discussion", "Home", new { id = entity.DiscussionId });
             }
-
-            Discussion discussion = new Discussion
+            catch (Exception ex)
             {
-                AuthorId = user.Id,
-                Title = model.Title,
-                Content = model.Content
-            };
+                _logger.LogError(ex.Message);
+                return StatusCode(500, new
+                {
+                    Status = "error",
+                    Message = "Server error"
+                });
+            }
+        }
 
-            var entity = _appDbContext.Add(discussion).Entity;
-            _appDbContext.SaveChanges();
-            _logger.LogInformation($"New discussion was added with id: {entity.DiscussionId} by {entity.AuthorId}");
-            return RedirectToAction("Discussion", "Home", new { id = entity.DiscussionId });
+        public IActionResult Post(int id)
+        {
+            ViewData["PostId"] = id;
+            return View();
         }
 
         public IActionResult Discussion(int id)
