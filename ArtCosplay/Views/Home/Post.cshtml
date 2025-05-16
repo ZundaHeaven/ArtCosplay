@@ -51,22 +51,29 @@
                 <div class="discussion-user">@post.Author.UserName</div>
                 <div class="discussion-time">@post.CreatedAt</div>
             </div>
+            @if (SignInManager.IsSignedIn(User))
+            {
+                if (post.AuthorId == user.Id || await UserManager.IsInRoleAsync(user, "Admin") || await UserManager.IsInRoleAsync(user, "Moderator"))
+                {
+                    <i class="fa-solid fa-trash discussion-action" id="delete-post" style="margin-top: -45px;"></i>
+                }
+            }
         </div>
 
         <h1 class="discussion-title">@post.Title</h1>
-
+        <img src="@post.ImageUrl" alt="Арт с Сакурой" class="post-image">
         <p class="discussion-text">
             @post.Content
         </p>
 
         <div class="discussion-actions">
-            <div class="discussion-action">
+            <div class="discussion-action" id="discussion-action">
                 <i class="far fa-thumbs-up"></i>
                 <span>@post.Likes.Count</span>
             </div>
             <div class="discussion-action">
                 <i class="far fa-comment"></i>
-                <span>@post.Comments.Count комментария</span>
+                <span id="post-comments-title">@post.Comments.Count комментария</span>
             </div>
         </div>
     </div>
@@ -75,7 +82,7 @@
         <h2 class="comments-title" id="comments-title">Комментарии (@post.Comments.Count)</h2>
 
         <div class="comment-form">
-            <input type="hidden" id="discussion-id" value="4" />
+            <input type="hidden" id="discussion-id" value="@postId" />
             <textarea class="comment-textarea" placeholder="Напишите ваш комментарий..." id="comment-textarea" maxlength="300" style="
                 display: block;
                 width: 100%;
@@ -91,30 +98,50 @@
             <p class="validation" id="validation-error"></p>
         </div>
 
-        <div class="comment-list">
-            @foreach (var comment in comments)
+        <div class="comment-list" id="comment-list">
+            @if (post.Comments.Count != 0)
             {
-                <div class="comment-item">
-                    <img src="@comment.User.AvatarUrl" alt="Аватар" class="comment-avatar">
-                    <div class="comment-content">
-                        <div class="comment-header">
-                            <span class="comment-user">@comment.User.UserName</span>
-                            <span class="comment-time">@comment.CreatedAt</span>
-                        </div>
-                        <p class="comment-text"></p>
-                        <div class="comment-actions">
-                            <div class="comment-action">
-                                <i class="far fa-thumbs-up"></i>
-                                <span>@comment.Likes.Count</span>
+                @foreach (var comment in comments)
+                {
+                    <div class="comment-item">
+                        <img src="@comment.User.AvatarUrl" alt="Аватар" class="comment-avatar">
+                        <div class="comment-content">
+                            <div class="comment-header">
+                                <span class="comment-user">@comment.User.UserName</span>
+                                <span class="comment-time">@comment.CreatedAt</span>
+                                @if (SignInManager.IsSignedIn(User))
+                                {
+                                    if (post.AuthorId == user.Id || await UserManager.IsInRoleAsync(user, "Admin") || await UserManager.IsInRoleAsync(user, "Moderator"))
+                                    {
+                                        <i class="fa-solid fa-trash discussion-action" name="delete-comment" style="margin-left: auto;" comment-id="@comment.CommentId"></i>
+                                    }
+                                }
                             </div>
-                            <div class="comment-action">
-                                <i class="fas fa-reply"></i>
-                                <span>Ответить</span>
+                            <p class="comment-text">@comment.Text</p>
+                            <div class="comment-actions">
+                                <div name="like-comment" class="comment-action@(likedComments.FirstOrDefault(x => x.CommentId == comment.CommentId) == null ? string.Empty : " liked")" comment-id="@comment.CommentId">
+                                    <i class="far fa-thumbs-up"></i>
+                                    <span>@comment.Likes.Count</span>
+                                </div>
+                                <div class="comment-action">
+                                    <i class="fas fa-reply"></i>
+                                    <span>Ответить</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                }
+            }
+            else
+            {
+                <span id="no-comments">Нет ещё комментариев!</span>
             }
         </div>
     </div>
+
+    <script src="/js/discussionLogic.js"></script>
+    <script>
+        pageType = 'Post';
+        returnUrl = '/Home/ArtPage';
+    </script>
 </div>

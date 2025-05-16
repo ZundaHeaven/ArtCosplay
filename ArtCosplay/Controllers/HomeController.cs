@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
@@ -22,8 +23,8 @@ namespace ArtCosplay.Controllers
 
         public IActionResult Index() => View();
         public IActionResult Privacy() => View();
-        public IActionResult Profile() => View(); 
-        public IActionResult ArtPage(ArtPageFindViewModel model) => View(model);
+        public IActionResult Profile() => View();
+        public IActionResult ArtPage(ArtPageFindViewModel model) => View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(model ?? new ArtPageFindViewModel(), new CreatePostViewModel()));
         public IActionResult DiscusPage(int? page, string? filter)
         {
             ViewData["Filter"] = filter;
@@ -52,17 +53,23 @@ namespace ArtCosplay.Controllers
                     Message = "User is null"
                 });
 
-                if (!ModelState.IsValid) return BadRequest(new
+                if (!ModelState.IsValid)
                 {
-                    Status = "error",
-                    Message = "Validation error"
-                });
+                    ModelState.AddModelError(string.Empty, "Неверная валидация!");
+                    return View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(new ArtPageFindViewModel(), model));
+                }
 
-                if (model.Image.Length > 4096 * 1024) return BadRequest(new
+                if (!ModelState.IsValid)
                 {
-                    Status = "error",
-                    Message = "File size is more than 4MB"
-                });
+                    ModelState.AddModelError(string.Empty, "Неверная валидация!");
+                    return View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(new ArtPageFindViewModel(), model));
+                }
+
+                if (model.Image.Length > 4096 * 1024) {
+                    ModelState.AddModelError(string.Empty, "Размер файла не должен превышать 4 мб!");
+                    return View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(new ArtPageFindViewModel(), model));
+                }
+
 
                 List<string> acceptableExtensions =
                     [".jpg", ".jpeg", ".png", ".webp"];
@@ -70,17 +77,18 @@ namespace ArtCosplay.Controllers
                 string extension = Path.GetExtension(model.Image.FileName);
 
                 if (!(acceptableExtensions.Contains(extension) 
-                    && model.Image.ContentType.ToLower().Contains("image"))) return BadRequest(new
+                    && model.Image.ContentType.ToLower().Contains("image")))
                 {
-                    Status = "error",
-                    Message = "File format is not supported"
-                });
+                    ModelState.AddModelError(string.Empty, "Формат файла не поддерживатся!");
+                    return View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(new ArtPageFindViewModel(), model));
+                }
+
 
                 string path;
                 using (SHA256 mySHA256 = SHA256.Create())
                 {
                     byte[] hash = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(model.Image.FileName + DateTime.Now.ToString()));
-                     path = "/Posts/" + Encoding.UTF8.GetString(hash) + extension;
+                    path = "/data/Posts/" + new string(BitConverter.ToString(hash).Where(x => x != '-').ToArray()) + extension;
                 }
 
                 using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
@@ -103,12 +111,10 @@ namespace ArtCosplay.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
-                return StatusCode(500, new
-                {
-                    Status = "error",
-                    Message = "Server error"
-                });
+                _logger.LogError(ex.Message + ex.Source + ex.StackTrace);
+                
+                ModelState.AddModelError(string.Empty, "Ошибка сервера");
+                return View(model);
             }
         }
 
@@ -146,11 +152,8 @@ namespace ArtCosplay.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return StatusCode(500, new
-                {
-                    Status = "error",
-                    Message = "Server error"
-                });
+                ModelState.AddModelError(string.Empty, "Ошибка сервера");
+                return View(model);
             }
         }
 

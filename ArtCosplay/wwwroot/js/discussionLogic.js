@@ -2,6 +2,9 @@ function isEmptyOrSpaces(str){
     return str === null || str.match(/^ *$/) !== null;
 }
 
+var pageType = 'Discussion';
+var returnUrl = '/Home/DiscusPage';
+
 var user;
 fetch('/User/GetCurrentUser', {method : 'GET'})
     .then((response) => response.text())
@@ -71,7 +74,7 @@ function addComment()
 
     sendButton.disabled = true;
     
-    fetch('/Comment/Discussion', {
+    fetch('/Comment/' + pageType, {
         method : 'POST',
         headers: {
             'Content-Type': 'application/json;charset=utf-8'
@@ -87,7 +90,7 @@ function addComment()
             validationError.textContent = json['message'];
         }
         else {
-            
+            console.log(pageType);
 
             var data = {
                 avatar: user.avatarUrl,
@@ -163,7 +166,7 @@ function likeDiscussion(event)
 
     likeShow = event.currentTarget.children[1];
     event.currentTarget.classList.toggle("liked");
-    fetch('/Discussion/Like', {
+    fetch('/' + pageType +'/Like', {
         method : 'POST',
         headers: {
             'Content-Type': 'application/json;charset=utf-8'
@@ -243,7 +246,7 @@ function deletePost()
         return;
     }
 
-    fetch('/Discussion/Delete', {
+    fetch('/' + pageType + '/Delete', {
         method : 'DELETE',
         headers: {
             'Content-Type': 'application/json;charset=utf-8'
@@ -259,7 +262,7 @@ function deletePost()
         }
         else
         {
-            window.location.replace("/Home/DiscusPage");
+            window.location.replace(returnUrl);
         }
     })
     .catch(error => {

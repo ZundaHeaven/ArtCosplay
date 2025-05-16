@@ -3,8 +3,7 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
 @using ArtCosplay.Models
-
-@model ArtPageFindViewModel
+@model Tuple<ArtPageFindViewModel,CreatePostViewModel>
 
 @inject AppDbContext DbContext
 @inject SignInManager<User> SignInManager
@@ -14,7 +13,7 @@
 
     int postId = Convert.ToInt32(ViewData["postId"]);
 
-    int page = Model.Page ?? 1;
+    int page = Model.Item1.Page ?? 1;
     var posts = DbContext.Posts
         .Include(d => d.Author)
         .Include(d => d.Comments)
@@ -22,9 +21,25 @@
         .OrderByDescending(x => x.CreatedAt)
         .ToList();
 
-    if (Model.Filter != null)
+    if (Model.Item1.Sort != null)
     {
-        posts = posts.Where(x => x.Content.ToLower().Contains(Model.Filter.ToLower()) || x.Title.ToLower().Contains(Model.Filter.ToLower()))
+        if (Model.Item1.Sort == "popular")
+            posts = posts.OrderByDescending(x => x.Likes.Count).ToList();
+        if (Model.Item1.Sort == "comments")
+            posts = posts.OrderByDescending(x => x.Comments.Count).ToList();
+    }
+
+    if (Model.Item1.FilterType != null)
+    {
+        if (Model.Item1.FilterType == "art")
+            posts = posts.Where(x => x.Type == "art").ToList();
+        else if (Model.Item1.FilterType == "cosplay")
+            posts = posts.Where(x => x.Type == "cosplay").ToList();
+    }
+
+    if (Model.Item1.Filter != null)
+    {
+        posts = posts.Where(x => x.Content.ToLower().Contains(Model.Item1.Filter.ToLower()) || x.Title.ToLower().Contains(Model.Item1.Filter.ToLower()))
             .ToList();
     }
 
@@ -53,26 +68,26 @@
 
         <form asp-action="ArtPage" asp-controller="Home" method="get">
             <div class="arts-search">
-                <input type="text" placeholder="Поиск по артам и косплеям..." asp-for="Filter" class="input-search">
+                <input type="text" placeholder="Поиск по артам и косплеям..." asp-for="Item1.Filter" class="input-search" name="Filter">
                 <button type="submit"><i class="fas fa-search"></i> Найти</button>
             </div>
 
             <div class="arts-filters">
                 <label class="filter-tab">
-                    <input type="radio" value="" asp-for="FilterType" style="display: none;">
+                    <input type="radio" value="" asp-for="Item1.FilterType" style="display: none;" name="FilterType">
                     <span>Все</span>
                 </label>
 
                 <label class="filter-tab">
-                    <input type="radio" value="art" asp-for="FilterType" style="display: none;">
+                    <input type="radio" value="art" asp-for="Item1.FilterType" style="display: none;" name="FilterType">
                     <span>Арты</span>
                 </label>
                 <label class="filter-tab">
-                    <input type="radio" value="cosplay" asp-for="FilterType" style="display: none;">
+                    <input type="radio" value="cosplay" asp-for="Item1.FilterType" style="display: none;" name="FilterType">
                     <span>Косплеи</span>
                 </label>
 
-                <select class="filter-select" asp-for="Sort">
+                <select class="filter-select" asp-for="Item1.Sort" name="Sort">
                     <option value="">Сначала новые</option>
                     <option value="popular">Сначала популярные</option>
                     <option value="comments">Сначала обсуждаемые</option>
@@ -82,32 +97,30 @@
 
         @foreach(var item in toShow)
         {
-            <div class="art-item">
-                <div class="art-header">
-                    <img src="@item.Author.AvatarUrl" alt="Аватар" class="art-avatar">
-                    <div>
-                        <span class="art-user">@item.Author.UserName</span>
-                        <span class="art-time">@item.CreatedAt</span>
+            <a href="@Url.Action("Post", "Home", new { id = item.PostId})" style="text-decoration: none;">
+                <div class="art-item">
+                    <div class="art-header">
+                        <img src="@item.Author.AvatarUrl" alt="Аватар" class="art-avatar">
+                        <div>
+                            <span class="art-user">@item.Author.UserName</span>
+                            <span class="art-time">@item.CreatedAt</span>
+                        </div>
+                    </div>
+                    <p class="art-title">@item.Title</p>
+                    <img src="@item.ImageUrl" alt="Арт" class="art-image">
+                    <p class="art-text">@item.Content</p>
+                    <div class="art-actions">
+                        <div class="art-action">
+                            <i class="far fa-thumbs-up"></i>
+                            <span>@item.Likes.Count</span>
+                        </div>
+                        <div class="art-action">
+                            <i class="far fa-comment"></i>
+                            <span>@item.Comments.Count</span>
+                        </div>
                     </div>
                 </div>
-                <img src="@item.ImageUrl" alt="Арт" class="art-image">
-                <p class="art-text">@item.Title</p>
-                @*                 <div class="art-tags">
-                    <span class="art-tag">#naruto</span>
-                    <span class="art-tag">#sakura</span>
-                    <span class="art-tag">#digitalart</span>
-                </div> *@
-                <div class="art-actions">
-                    <div class="art-action">
-                        <i class="far fa-thumbs-up"></i>
-                        <span>@item.Likes.Count</span>
-                    </div>
-                    <div class="art-action">
-                        <i class="far fa-comment"></i>
-                        <span>@item.Comments.Count</span>
-                    </div>
-                </div>
-            </div>
+            </a>
         }
 
         @if (posts.Count != 0)
@@ -115,14 +128,14 @@
             <div class="pagination">
                 @if (page != 1)
                 {
-                    <a href="@Url.Action("DiscusPage", "Home", new ArtPageFindViewModel {Page = page - 1, Filter = Model.Filter, FilterType = Model.FilterType, Sort = Model.Sort})" class="page-number">
+                    <a href="@Url.Action("ArtPage", "Home", new {Page = Model.Item1 != null ?  Model.Item1.Page == null ? 1 : Model.Item1.Page - 1 : 1, Filter = Model.Item1.Filter, FilterType = Model.Item1.FilterType, Sort = Model.Item1.Sort})" class="page-number">
                         <i class="fas fa-chevron-left"></i>
                     </a>
                 }
                 <p class="page-number active">@(page)</p>
                 @if (page != maxPage)
                 {
-                    <a href="@Url.Action("DiscusPage", "Home", new ArtPageFindViewModel {Page = page + 1, Filter = Model.Filter, FilterType = Model.FilterType, Sort = Model.Sort})" class="page-number">
+                    <a href="@Url.Action("ArtPage", "Home", new {Page = Model.Item1 != null ?  Model.Item1.Page == null ? 2 : Model.Item1.Page + 1 : 2, Filter = Model.Item1.Filter, FilterType = Model.Item1.FilterType, Sort = Model.Item1.Sort})" class="page-number">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 }
@@ -137,10 +150,11 @@
     {
         <aside class="create-art">
             <h2 class="create-title">Создать новый пост</h2>
-            <form method="post" asp-action="ArtPage" asp-controller="Home">
+            <form method="post" asp-action="ArtPage" asp-controller="Home" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly"></div>
                 <div class="form-group">
                     <label for="art-title">Заголовок</label>
-                    <input name="Title" type="text" id="art-title" placeholder="Название вашего арта/косплея">
+                    <input asp-for="Item2.Title" name="Title" type="text" id="art-title" placeholder="Название вашего арта/косплея">
                 </div>
 
                 <div class="file-upload">
@@ -148,12 +162,12 @@
                         <i class="fas fa-cloud-upload-alt"></i>
                     </div>
                     <span>Перетащите сюда изображение или кликните для загрузки</span>
-                    <input name="ImageUrl" type="file" id="art-file" style="display: none;">
+                    <input asp-for="Item2.Image" name="Image" type="file" id="art-file" accept="image/*" style="opacity: 0;">
                 </div>
 
                 <div class="form-group">
                     <label name="Content" for="art-text">Описание</label>
-                    <textarea id="art-text" placeholder="Расскажите о своем творении, используемых материалах и т.д."></textarea>
+                    <textarea asp-for="Item2.Content" name="Content" id="art-text" placeholder="Расскажите о своем творении, используемых материалах и т.д." style="height: 120px;"></textarea>
                 </div>
                 @* 
             <div class="form-group">
@@ -163,11 +177,11 @@
 
                 <div class="post-type" style="margin-bottom: 10px">
                     <label class="filter-tab">
-                        <input type="radio" value="art" name="Type" style="display: none;">
+                        <input asp-for="Item2.Type" type="radio" value="art" name="Type" style="display: none;" checked="checked">
                         <span>Арт</span>
                     </label>
                     <label class="filter-tab">
-                        <input type="radio" value="cosplay" name="Type" style="display: none;">
+                        <input asp-for="Item2.Type" type="radio" value="cosplay" name="Type" style="display: none;">
                         <span>Косплей</span>
                     </label>
                 </div>
@@ -176,3 +190,5 @@
         </aside>
     }
 </div>
+
+<script src="/js/artSendLogic.js"></script>

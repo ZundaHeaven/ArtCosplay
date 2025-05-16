@@ -100,7 +100,14 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s;
 }
-        
+
+.art-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #444;
+}
+
 .art-item:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
@@ -131,19 +138,20 @@
     color: #777;
     margin-left: 10px;
 }
-        
+
 .art-image {
-    width: 100%;
     border-radius: 8px;
     margin-bottom: 10px;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(106, 17, 203, 0.3);
     transition: transform 0.3s;
+    max-height: 700px;
+    width: auto;
+    display: block;
+    margin: 20px auto;
+    max-width: 700px
 }
-        
-.art-image:hover {
-    transform: scale(1.02);
-}
+       
         
 .art-text {
     font-size: 14px;

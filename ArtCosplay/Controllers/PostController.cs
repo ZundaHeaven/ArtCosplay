@@ -7,12 +7,16 @@ using ArtCosplay.Models;
 
 namespace ArtCosplay.Controllers
 {
-    public class PostController(ILogger<PostController> logger, AppDbContext appDbContext, UserManager<User> userManager, SignInManager<User> signInManager) : Controller
+    public class PostController(
+        ILogger<PostController> logger, 
+        AppDbContext appDbContext, 
+        UserManager<User> userManager,
+        IWebHostEnvironment appEnvironment) : Controller
     {
         private readonly ILogger<PostController> _logger = logger;
         private readonly AppDbContext _appDbContext = appDbContext;
         private readonly UserManager<User> _userManager = userManager;
-        private readonly SignInManager<User> _signInManager = signInManager;
+        private readonly IWebHostEnvironment _appEnvironment = appEnvironment;
 
         [HttpGet]
         public IActionResult Get(int? id)
@@ -149,7 +153,7 @@ namespace ArtCosplay.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete([FromBody] int? id)
+        public async Task<IActionResult> Delete([FromBody] IdModel model)
         {
             try
             {
@@ -161,7 +165,7 @@ namespace ArtCosplay.Controllers
                 });
 
                 var post = _appDbContext.Posts
-                    .FirstOrDefault(x => x.PostId == id);
+                    .FirstOrDefault(x => x.PostId == model.Id);
                 if (post == null) return BadRequest(new
                 {
                     Status = "error",
@@ -181,6 +185,15 @@ namespace ArtCosplay.Controllers
 
                 _appDbContext.Posts.Remove(post);
                 await _appDbContext.SaveChangesAsync();
+
+                try
+                {
+                    System.IO.File.Delete(_appEnvironment.WebRootPath + post.ImageUrl);
+                }
+                catch
+                {
+                    _logger.LogError($"Cant delete file {post.ImageUrl}");
+                }
 
                 return Ok(new
                 {
