@@ -23,7 +23,6 @@ namespace ArtCosplay.Data
 
         public AppDbContext() => Database.EnsureCreated();
 
-        public DbSet<User> Users => Set<User>();
         public DbSet<Event> Events => Set<Event>();
         public DbSet<News> News => Set<News>(); 
         public DbSet<Post> Posts => Set<Post>();
@@ -110,6 +109,21 @@ namespace ArtCosplay.Data
                 entity.HasOne(e => e.User)
                     .WithMany(u => u.Likes)
                     .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.Comment)
+                    .WithMany(u => u.Likes)
+                    .HasForeignKey(e => e.CommentId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.Post)
+                    .WithMany(u => u.Likes)
+                    .HasForeignKey(e => e.PostId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.Discussion)
+                    .WithMany(u => u.Likes)
+                    .HasForeignKey(e => e.DiscussionId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 

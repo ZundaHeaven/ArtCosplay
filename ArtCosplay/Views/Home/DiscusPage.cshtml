@@ -16,12 +16,8 @@
     var discussions = DbContext.Discussions
         .Include(d => d.Author)
         .Include(d => d.Comments)
-        .Include(d => d.Likes);
-
-    if (page <= 0)
-        page = 1;
-    else if (page > discussions.Count() / 5)
-        page = discussions.Count() / 5 + 1;
+        .Include(d => d.Likes)
+        .OrderByDescending(x => x.CreatedAt);
 }
 
 <div class="discussions-container">
@@ -88,10 +84,10 @@
                     <label asp-for="Content">Текст обсуждения</label>
                     <textarea asp-for ="Content" placeholder="Опишите ваш вопрос или тему для обсуждения"></textarea>
                 </div>
-                <div class="form-group">
+@*                 <div class="form-group">
                     <label asp-for="Tags">Теги (через запятую)</label>
                     <input asp-for="Tags" type="text" id="tags" placeholder="например: косплей, советы, материалы">
-                </div>
+                </div> *@
                 <button type="submit" class="submit-btn">Опубликовать</button>
             </form>
         </aside>

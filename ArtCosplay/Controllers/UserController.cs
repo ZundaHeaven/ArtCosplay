@@ -1,16 +1,14 @@
 ﻿using ArtCosplay.Data;
 using ArtCosplay.Data.DB;
 using ArtCosplay.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Data.Entity;
 
 namespace ArtCosplay.Controllers
 {
-    public class UserController(ILogger<HomeController> logger, AppDbContext appDbContext, UserManager<User> userManager, SignInManager<User> signInManager) : Controller
+    public class UserController(ILogger<UserController> logger, AppDbContext appDbContext, UserManager<User> userManager, SignInManager<User> signInManager) : Controller
     {
-        private readonly ILogger<HomeController> _logger = logger;
+        private readonly ILogger<UserController> _logger = logger;
         private readonly AppDbContext _appDbContext = appDbContext;
         private readonly UserManager<User> _userManager = userManager;
         private readonly SignInManager<User> _signInManager = signInManager;
@@ -129,6 +127,23 @@ namespace ArtCosplay.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return NotFound();
+
+            return Ok(new
+            {
+                user.Id,
+                user.UserName,
+                user.Email,
+                AvatarUrl = user.AvatarUrl,
+                user.LastLogin,
+                user.Bio
+            });
         }
     }
 }

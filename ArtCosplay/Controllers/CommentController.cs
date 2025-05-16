@@ -14,8 +14,8 @@ namespace ArtCosplay.Controllers
         private readonly UserManager<User> _userManager = userManager;
         private readonly SignInManager<User> _signInManager = signInManager;
 
-        [HttpPost]
-        public async Task<IActionResult> CommentLike([FromBody] int id)
+        [HttpDelete]
+        public async Task<IActionResult> Delete([FromBody] IdModel model)
         {
             try
             {
@@ -27,22 +27,72 @@ namespace ArtCosplay.Controllers
                 });
 
                 var comment = _appDbContext.Comments
-                    .FirstOrDefault(x => x.CommentId == id);
+                    .FirstOrDefault(x => x.CommentId == model.Id);
                 if (comment == null) return BadRequest(new
                 {
                     Status = "error",
                     Message = "No comment was founded"
                 });
 
-                var like = await _appDbContext.Likes
-                    .FirstOrDefaultAsync(x => x.CommentId == id && x.UserId == user.Id);
+                if (!(await _userManager.IsInRoleAsync(user, "Admin")
+                    || await _userManager.IsInRoleAsync(user, "Moderator")
+                    || comment.UserId == user.Id))
+                {
+                    return BadRequest(new
+                    {
+                        Status = "error",
+                        Message = "No premission to delete "
+                    });
+                }
+
+                _appDbContext.Remove(comment);
+                _appDbContext.SaveChanges();
+
+                return Ok(new
+                {
+                    Status = "success",
+                    Message = "Comment was deleted"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(500, new
+                {
+                    Status = "error",
+                    Message = "Server error"
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Like([FromBody] IdModel model)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null) return BadRequest(new
+                {
+                    Status = "error",
+                    Message = "User is null"
+                });
+                var comment = _appDbContext.Comments
+                    .FirstOrDefault(x => x.CommentId == model.Id);
+                if (comment == null) return BadRequest(new
+                {
+                    Status = "error",
+                    Message = "No comment was founded"
+                });
+
+                var like = _appDbContext.Likes
+                    .FirstOrDefault(x => x.CommentId == model.Id && x.UserId == user.Id);
 
                 if (like == null)
                 {
-                    await _appDbContext.AddAsync(new Like
+                    _appDbContext.Add(new Like
                     {
                         UserId = user.Id,
-                        CommentId = id
+                        CommentId = model.Id
                     });
                 }
                 else
@@ -50,12 +100,13 @@ namespace ArtCosplay.Controllers
                     _appDbContext.Remove(like);
                 }
 
-                await _appDbContext.SaveChangesAsync();
+                _appDbContext.SaveChanges();
 
                 return Ok(new
                 {
                     Status = "success",
-                    Message = "Like was " + like == null ? "added" : "removed"
+                    Message = "Like was " + like == null ? "added" : "removed",
+                    LikesCount = _appDbContext.Likes.Where(x => x.CommentId == model.Id).ToList().Count
                 });
             }
             catch (Exception ex)
@@ -70,7 +121,7 @@ namespace ArtCosplay.Controllers
         }
 
         [HttpGet]
-        public IActionResult CommentPost(int id)
+        public IActionResult Post(int id)
         {
             try
             {
@@ -115,7 +166,7 @@ namespace ArtCosplay.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CommentPost([FromBody] CommentViewModel model)
+        public async Task<IActionResult> Post([FromBody] CommentViewModel model)
         {
             try
             {
@@ -139,19 +190,117 @@ namespace ArtCosplay.Controllers
                     Message = "Validation error"
                 });
 
-                await _appDbContext.Comments.AddAsync(new Comment
+                var comment = (await _appDbContext.Comments.AddAsync(new Comment
                 {
                     PostId = model.Id,
                     UserId = user.Id,
                     Text = model.Content
-                });
+                })).Entity;
 
                 await _appDbContext.SaveChangesAsync();
 
                 return Ok(new
                 {
                     Status = "success",
-                    Message = "Comment was added!"
+                    Message = "Comment was added!",
+                    CommentId = comment.CommentId
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(500, new
+                {
+                    Status = "error",
+                    Message = "Server error"
+                });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult Discussion(int id)
+        {
+            try
+            {
+                var discussion = _appDbContext.Discussions
+                    .FirstOrDefault(x => x.DiscussionId == id);
+                if (discussion == null) return BadRequest(new
+                {
+                    Status = "error",
+                    Message = "No discussion was founded"
+                });
+
+                var comments = _appDbContext.Comments
+                    .Include(x => x.User)
+                    .Include(x => x.Likes)
+                    .Where(x => x.DiscussionId == discussion.DiscussionId);
+
+                return Ok(new
+                {
+                    Status = "success",
+                    Message = "Comments was fetched",
+                    Comments = comments.Select(x =>
+                        new
+                        {
+                            Id = x.CommentId,
+                            UserId = x.UserId,
+                            CreatedAt = x.CreatedAt,
+                            LikesCount = x.Likes.Count,
+                            Content = x.Text
+                        }
+                    )
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(500, new
+                {
+                    Status = "error",
+                    Message = "Server error"
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Discussion([FromBody] CommentViewModel model)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null) return BadRequest(new
+                {
+                    Status = "error",
+                    Message = "User is null"
+                });
+
+                var discussion = _appDbContext.Discussions.FirstOrDefault(x => x.DiscussionId == model.Id);
+                if (discussion == null) return BadRequest(new
+                {
+                    Status = "error",
+                    Message = "No discussion was founded"
+                });
+
+                if (!ModelState.IsValid) return BadRequest(new
+                {
+                    Status = "error",
+                    Message = "Validation error"
+                });
+
+                var comment = (await _appDbContext.Comments.AddAsync(new Comment
+                {
+                    DiscussionId = model.Id,
+                    UserId = user.Id,
+                    Text = model.Content
+                })).Entity;
+
+                await _appDbContext.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    Status = "success",
+                    Message = "Comment was added!",
+                    CommentId = comment.CommentId
                 });
             }
             catch (Exception ex)

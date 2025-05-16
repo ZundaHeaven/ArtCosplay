@@ -1,16 +1,15 @@
 ﻿using ArtCosplay.Data.DB;
 using ArtCosplay.Data;
-using ArtCosplay.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.Entity;
+using ArtCosplay.Models;
 
 namespace ArtCosplay.Controllers
 {
-    public class DiscussionController(ILogger<HomeController> logger, AppDbContext appDbContext, UserManager<User> userManager, SignInManager<User> signInManager) : Controller
+    public class DiscussionController(ILogger<DiscussionController> logger, AppDbContext appDbContext, UserManager<User> userManager, SignInManager<User> signInManager) : Controller
     {
-        private readonly ILogger<HomeController> _logger = logger;
+        private readonly ILogger<DiscussionController> _logger = logger;
         private readonly AppDbContext _appDbContext = appDbContext;
         private readonly UserManager<User> _userManager = userManager;
 
@@ -94,7 +93,7 @@ namespace ArtCosplay.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Like([FromBody] int id)
+        public async Task<IActionResult> Like([FromBody] IdModel model)
         {
             try
             {
@@ -106,22 +105,22 @@ namespace ArtCosplay.Controllers
                 });
 
                 var discussion = _appDbContext.Discussions
-                    .FirstOrDefault(x => x.DiscussionId == id);
+                    .FirstOrDefault(x => x.DiscussionId == model.Id);
                 if (discussion == null) return BadRequest(new
                 {
                     Status = "error",
                     Message = "No discussion was founded"
                 });
 
-                var like = await _appDbContext.Likes
-                    .FirstOrDefaultAsync(x => x.DiscussionId == id && x.UserId == user.Id);
+                var like = _appDbContext.Likes
+                    .FirstOrDefault(x => x.DiscussionId == model.Id && x.UserId == user.Id);
 
                 if(like == null)
                 {
-                    await _appDbContext.AddAsync(new Like
+                    _appDbContext.Add(new Like
                     {
                         UserId = user.Id,
-                        DiscussionId = id
+                        DiscussionId = model.Id
                     });
                 }
                 else
@@ -129,12 +128,13 @@ namespace ArtCosplay.Controllers
                     _appDbContext.Remove(like);
                 }
 
-                await _appDbContext.SaveChangesAsync();
+                _appDbContext.SaveChanges();
 
                 return Ok(new
                 {
                     Status = "success",
-                    Message = "Like was " + like == null ? "added" : "removed"
+                    Message = "Like was " + like == null ? "added" : "removed",
+                    LikesCount = _appDbContext.Likes.Where(x => x.DiscussionId == model.Id).ToList().Count
                 });
             }
             catch (Exception ex)
@@ -149,7 +149,7 @@ namespace ArtCosplay.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete([FromBody] int? id)
+        public async Task<IActionResult> Delete([FromBody] IdModel model)
         {
             try
             {
@@ -161,7 +161,7 @@ namespace ArtCosplay.Controllers
                 });
         
                 var discussion = _appDbContext.Discussions
-                    .FirstOrDefault(x => x.DiscussionId == id);
+                    .FirstOrDefault(x => x.DiscussionId == model.Id);
                 if (discussion == null) return BadRequest(new
                 {
                     Status = "error",
@@ -169,7 +169,7 @@ namespace ArtCosplay.Controllers
                 });
         
                 if(!(await _userManager.IsInRoleAsync(user, "Admin") 
-                    || await _userManager.IsInRoleAsync(user, "Admin")
+                    || await _userManager.IsInRoleAsync(user, "Moderator")
                     || discussion.AuthorId == user.Id))
                 {
                     return BadRequest(new

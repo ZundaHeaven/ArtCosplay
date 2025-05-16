@@ -3,12 +3,13 @@ using ArtCosplay.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.Entity;
+using ArtCosplay.Models;
 
 namespace ArtCosplay.Controllers
 {
-    public class PostController(ILogger<HomeController> logger, AppDbContext appDbContext, UserManager<User> userManager, SignInManager<User> signInManager) : Controller
+    public class PostController(ILogger<PostController> logger, AppDbContext appDbContext, UserManager<User> userManager, SignInManager<User> signInManager) : Controller
     {
-        private readonly ILogger<HomeController> _logger = logger;
+        private readonly ILogger<PostController> _logger = logger;
         private readonly AppDbContext _appDbContext = appDbContext;
         private readonly UserManager<User> _userManager = userManager;
         private readonly SignInManager<User> _signInManager = signInManager;
@@ -92,7 +93,7 @@ namespace ArtCosplay.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Like([FromBody] int id)
+        public async Task<IActionResult> Like([FromBody] IdModel model)
         {
             try
             {
@@ -104,22 +105,22 @@ namespace ArtCosplay.Controllers
                 });
 
                 var post = _appDbContext.Posts
-                    .FirstOrDefault(x => x.PostId == id);
+                    .FirstOrDefault(x => x.PostId == model.Id);
                 if (post == null) return BadRequest(new
                 {
                     Status = "error",
                     Message = "No post was founded"
                 });
 
-                var like = await _appDbContext.Likes
-                    .FirstOrDefaultAsync(x => x.PostId == id && x.UserId == user.Id);
+                var like = _appDbContext.Likes
+                    .FirstOrDefault(x => x.PostId == model.Id && x.UserId == user.Id);
 
                 if (like == null)
                 {
-                    await _appDbContext.AddAsync(new Like
+                    _appDbContext.Add(new Like
                     {
                         UserId = user.Id,
-                        PostId = id
+                        PostId = model.Id
                     });
                 }
                 else
@@ -127,12 +128,13 @@ namespace ArtCosplay.Controllers
                     _appDbContext.Remove(like);
                 }
 
-                await _appDbContext.SaveChangesAsync();
+                _appDbContext.SaveChanges();
 
                 return Ok(new
                 {
                     Status = "success",
-                    Message = "Like was " + like == null ? "added" : "removed"
+                    Message = "Like was " + like == null ? "added" : "removed",
+                    LikesCount = _appDbContext.Likes.Where(x => x.PostId == model.Id).ToList().Count
                 });
             }
             catch (Exception ex)
@@ -167,7 +169,7 @@ namespace ArtCosplay.Controllers
                 });
 
                 if(!(await _userManager.IsInRoleAsync(user, "Admin") 
-                    || await _userManager.IsInRoleAsync(user, "Admin")
+                    || await _userManager.IsInRoleAsync(user, "Moderator")
                     || post.AuthorId == user.Id))
                 {
                     return BadRequest(new

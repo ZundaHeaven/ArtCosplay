@@ -8,6 +8,7 @@ namespace ArtCosplay.Data.DB
         [Key]
         public int LikeId { get; set; }
 
+
         public int? PostId { get; set; }
         public int? CommentId { get; set; }
         public int? DiscussionId { get; set; }

@@ -15,11 +15,28 @@
     int discussionId = Convert.ToInt32(ViewData["DiscussionId"]);
     int page = Convert.ToInt32(ViewData["Page"] ?? 1);
 
+    var user = await UserManager.GetUserAsync(User);
+    bool isLiked = false;
+
     Discussion? discussion = DbContext.Discussions
         .Include(d => d.Author)
         .Include(d => d.Comments)
         .Include(d => d.Likes)
         .FirstOrDefault(i => i.DiscussionId == discussionId);
+
+
+    List<Like> likedComments = new List<Like>();
+
+    if (user != null)
+    {
+        isLiked = discussion.Likes.FirstOrDefault(x => x.UserId == user.Id) != null;
+        likedComments = DbContext.Users.Include(x => x.Likes)
+            .First(x => x.Id == user.Id)
+            .Likes
+            .Where(x => x.CommentId != null)
+            .ToList();
+    }
+
 
     List<Comment> comments = DbContext.Comments
         .Include(d => d.Likes)
@@ -27,12 +44,6 @@
         .Where(i => i.DiscussionId == discussionId)
         .OrderByDescending(x => x.CommentId)
         .ToList();
-
-
-    if (page <= 0)
-        page = 1;
-    else if (page > discussion.Comments.Count / 5)
-        page = discussion.Comments.Count / 5 + 1;
 }
 
 <div class="discussion-container">
@@ -43,6 +54,14 @@
                 <div class="discussion-user">@discussion.Author.UserName</div>
                 <div class="discussion-time">@discussion.CreatedAt.ToString()</div>
             </div>
+            @if(SignInManager.IsSignedIn(User))
+            {
+                if (discussion.AuthorId == user.Id)
+                {
+                    <i class="fa-solid fa-trash discussion-action" id="delete-post" style="margin-top: -45px;"></i>
+                }
+            }
+            
         </div>
 
         <h1 class="discussion-title">@discussion.Title</h1>
@@ -58,19 +77,19 @@
         </div> *@
 
         <div class="discussion-actions">
-            <div class="discussion-action">
+            <div class="discussion-action@(isLiked ? " liked" : "")" id="discussion-action">
                 <i class="far fa-thumbs-up"></i>
                 <span>@discussion.Likes.Count</span>
             </div>
             <div class="discussion-action">
                 <i class="far fa-comment"></i>
-                <span>@discussion.Comments.Count комментария</span>
+                <span id="post-comments-title">@discussion.Comments.Count комментария</span>
             </div>
         </div>
     </div>
 
     <div class="comments-section">
-        <h2 class="comments-title">Комментарии (@discussion.Comments.Count)</h2>
+        <h2 class="comments-title" id="comments-title">Комментарии (@discussion.Comments.Count)</h2>
 
         <div class="comment-form">
             <input type="hidden" id="discussion-id" value="@discussionId" />
@@ -87,16 +106,13 @@
             "
             ></textarea>
             <button type="submit" class="comment-submit" style="width: 100%; margin-bottom: 10px;" id="comment-send">Отправить</button>
+            <p class="validation" id="validation-error"></p>
         </div>
 
-        <div class="comments-pagination-info">
-            Показаны комментарии 1-5 из @discussion.Comments.Count
-        </div>
-
-        <div class="comment-list">
+        <div class="comment-list" id="comment-list">
             @if (@discussion.Comments.Count != 0)
             {
-                @foreach (var comment in comments.Chunk(5).ElementAt(page - 1))
+                @foreach (var comment in comments)
                 {
                     <div class="comment-item">
                         <img src="@comment.User.AvatarUrl" alt="Аватар" class="comment-avatar">
@@ -104,10 +120,17 @@
                             <div class="comment-header">
                                 <span class="comment-user">@@@comment.User.UserName</span>
                                 <span class="comment-time">@comment.CreatedAt</span>
+                                @if (SignInManager.IsSignedIn(User))
+                                {
+                                    if (discussion.AuthorId == user.Id)
+                                    {
+                                        <i class="fa-solid fa-trash discussion-action" name="delete-comment" style="margin-left: auto;" comment-id="@comment.CommentId"></i>
+                                    }
+                                }
                             </div>
                             <p class="comment-text">@comment.Text</p>
                             <div class="comment-actions">
-                                <div class="comment-action">
+                                <div name="like-comment" class="comment-action@(likedComments.FirstOrDefault(x => x.CommentId == comment.CommentId) == null ? string.Empty : " liked")" comment-id="@comment.CommentId">
                                     <i class="far fa-thumbs-up"></i>
                                     <span>@comment.Likes.Count</span>
                                 </div>
@@ -119,50 +142,19 @@
                         </div>
                     </div>
                 }
-                <div class="pagination">
-                    @for (int i = page - 2 <= 0 ? 1 : page - 2; i <= discussion.Comments.Count / 5 + 1; ++i)
-                    {
-                        <a href="#" class="page-number@(i == page ? " active" : string.Empty)">@i</a>
-                    }
-                    @if(discussion.Comments.Count / 5.0 > 1.0)
-                    {
-                        <a href="#" class="page-number">
-                            <i class="fas fa-chevron-right"></i>
-                        </a>
-                    }
-                </div>
+@*                 <div class="pagination">
+                    <a href="#" class="page-number">1</a>
+                    <a href="#" class="page-number">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div> *@
             }
             else
             {
-                <span>Нет ещё комментариев!</span>
+                <span id="no-comments">Нет ещё комментариев!</span>
             }
         </div>
     </div>
 </div>
 
-<script>
-    function addComment()
-    {
-        contentBox = document.getElementById('comment-textarea');
-
-        fetch('/User/DiscussionComment', {
-            method : 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: JSON.stringify({
-                Id: document.getElementById('discussion-id').value,
-                Content : contentBox.value
-            })
-        })
-        .then(response => response.json())
-        .then(json => {
-            if (json['status'] == 'success') {
-                alert('NICE');
-            }
-        });
-    }
-
-    var button = document.getElementById('comment-send');
-    button.onclick = addComment;
-</script>
+<script src="/js/discussionLogic.js"></script>
