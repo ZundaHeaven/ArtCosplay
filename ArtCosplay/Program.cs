@@ -47,23 +47,6 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
-
-    var roles = new List<string>
-    {
-        "User", // Just a user
-        "Moderator", // Moderate content and etc.
-        "Admin" // Can access statistics and services
-    };
-
-    var roleManager = app.Services.GetRequiredService<RoleManager<IdentityRole>>();
-    foreach (var roleName in roles)
-    {
-        if (!await roleManager.RoleExistsAsync(roleName))
-        {
-            await roleManager.CreateAsync(new IdentityRole(roleName));
-            Console.WriteLine($"Создана роль: {roleName}");
-        }
-    }
 }
 
 app.UseHttpsRedirection();

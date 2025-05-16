@@ -102,6 +102,8 @@ function addComment()
             commentHeader.innerText = `Комментарии (${document.getElementsByClassName('comment-item').length})`;
             commentHeaderPost.innerText = `${document.getElementsByClassName('comment-item').length} комментария`
             contentBox.value = null;
+
+            validationError.textContent = '';
             
             noComments = document.getElementById('no-comments');
             if(noComments) noComments.remove();

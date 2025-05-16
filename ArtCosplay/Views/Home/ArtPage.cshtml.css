@@ -32,7 +32,7 @@
     margin-bottom: 20px;
 }
 
-.arts-search input {
+::deep .input-search {
     flex: 1;
     padding: 10px 15px;
     border: 1px solid #ddd;
@@ -62,7 +62,7 @@
     flex-wrap: wrap;
 }
 
-.filter-tab {
+.filter-tab span {
     padding: 8px 16px;
     border-radius: 20px;
     background-color: rgba(106, 17, 203, 0.1);
@@ -71,18 +71,19 @@
     transition: all 0.3s;
     border: none;
     font-size: 14px;
+    display: flex;
 }
 
-.filter-tab.active {
+.filter-tab input:checked ~ span {
     background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
     color: white;
 }
 
-.filter-tab:hover {
+.filter-tab span:hover {
     background-color: rgba(106, 17, 203, 0.2);
 }
 
-.filter-select {
+::deep .filter-select {
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 20px;

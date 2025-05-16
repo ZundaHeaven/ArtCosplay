@@ -41,10 +41,10 @@ namespace ArtCosplay.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogInformation("Error while fetching users");
-                return NotFound(new
+                _logger.LogError($"Error while fetching users {ex}");
+                return StatusCode(500, new
                 {
-                    Status = "error",
+                    Status = "Server error",
                     ex.Message
                 });
             }
@@ -133,7 +133,11 @@ namespace ArtCosplay.Controllers
         public async Task<IActionResult> GetCurrentUser()
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null) return NotFound();
+            if (user == null) return BadRequest(new
+            {
+                Status = "error",
+                Message = "User not found"
+            });
 
             return Ok(new
             {
@@ -144,6 +148,62 @@ namespace ArtCosplay.Controllers
                 user.LastLogin,
                 user.Bio
             });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Role([FromBody] AddRoleViewModel model)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(model.userId);
+                if (user == null) return BadRequest(new
+                {
+                    Status = "error",
+                    Message = "User not found"
+                });
+
+                var sender = await _userManager.GetUserAsync(User);
+
+                if (sender == null) return BadRequest(new
+                {
+                    Status = "error",
+                    Message = "Not authorized"
+                });
+
+                if (!await _userManager.IsInRoleAsync(sender, "Admin")) return BadRequest(new
+                {
+                    Status = "error",
+                    Message = "No premissions to add role to the user"
+                });
+
+                var result = await _userManager.AddToRoleAsync(user, model.roleName);
+                if (result.Succeeded)
+                {
+                    return Ok(new
+                    {
+                        Status = "success",
+                        Message = "User added to role successfully"
+                    });
+                }
+                else
+                {
+                    return BadRequest(new
+                    {
+                        Status = "error",
+                        Message = "Error while adding role",
+                        Errors = result.Errors
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error while fetching users {ex}");
+                return StatusCode(500, new
+                {
+                    Status = "error",
+                    Message = "Server error"
+                });
+            }
         }
     }
 }
