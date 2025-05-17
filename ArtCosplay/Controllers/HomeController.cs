@@ -23,7 +23,40 @@ namespace ArtCosplay.Controllers
 
         public IActionResult Index() => View();
         public IActionResult Privacy() => View();
-        public IActionResult Profile() => View();
+        public async Task<IActionResult> Profile(string? id, int? page)
+        {
+            try
+            {
+                if (id == null)
+                {
+                    var user = await _userManager.GetUserAsync(User);
+
+                    if (user == null) return BadRequest(new
+                    {
+                        Status = "error",
+                        Message = "User is null"
+                    });
+
+                    id = user.Id;
+                }
+                else
+                {
+                    if(_appDbContext.Users.FirstOrDefault(x => x.Id == id) == null)
+                    {
+                        return NotFound();
+                    }
+                }
+
+                ViewData["Page"] = page == null ? 1 : page;
+                ViewData["Id"] = id;
+                return View();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + ex.Source + ex.StackTrace);
+                return NotFound();
+            }
+        } 
         public IActionResult ArtPage(ArtPageFindViewModel model) => View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(model ?? new ArtPageFindViewModel(), new CreatePostViewModel()));
         public IActionResult DiscusPage(int? page, string? filter)
         {
@@ -114,7 +147,7 @@ namespace ArtCosplay.Controllers
                 _logger.LogError(ex.Message + ex.Source + ex.StackTrace);
                 
                 ModelState.AddModelError(string.Empty, "Ошибка сервера");
-                return View(model);
+                return View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(new ArtPageFindViewModel(), model));
             }
         }
 

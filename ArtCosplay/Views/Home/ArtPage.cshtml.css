@@ -101,11 +101,17 @@
     transition: transform 0.3s;
 }
 
+.art-item a {
+    text-decoration: none;
+    color: black;
+}
+
 .art-title {
     font-size: 22px;
     font-weight: bold;
     margin-bottom: 8px;
     color: #444;
+    font-family: 'Comic Sans MS';
 }
 
 .art-item:hover {

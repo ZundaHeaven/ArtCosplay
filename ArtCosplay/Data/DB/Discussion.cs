@@ -11,7 +11,7 @@ namespace ArtCosplay.Data.DB
         [Required, MaxLength(100)]
         public string Title { get; set; }
 
-        [Required]
+        [Required, MaxLength(2000)]
         public string Content { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

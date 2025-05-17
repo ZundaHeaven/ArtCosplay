@@ -48,22 +48,24 @@
 
 <div class="discussion-container">
     <div class="discussion-content">
-        <div class="discussion-header">
-            <img src="@discussion.Author.AvatarUrl" alt="Аватар" class="discussion-avatar">
-            <div class="discussion-user-info">
-                <div class="discussion-user">@discussion.Author.UserName</div>
-                <div class="discussion-time">@discussion.CreatedAt.ToString()</div>
-            </div>
-            @if(SignInManager.IsSignedIn(User))
-            {
-                if (discussion.AuthorId == user.Id || await UserManager.IsInRoleAsync(user, "Admin") || await UserManager.IsInRoleAsync(user, "Moderator"))
+        
+            <div class="discussion-header">
+                <a href="@Url.Action("Profile", "Home", new {Id = discussion.AuthorId})">
+                    <img src="@discussion.Author.AvatarUrl" alt="Аватар" class="discussion-avatar">
+                    <div class="discussion-user-info">
+                        <div class="discussion-user">@discussion.Author.UserName</div>
+                        <div class="discussion-time">@discussion.CreatedAt.ToString()</div>
+                    </div>
+                </a>
+                @if(SignInManager.IsSignedIn(User))
                 {
-                    <i class="fa-solid fa-trash discussion-action" id="delete-post" style="margin-top: -45px;"></i>
+                    if (discussion.AuthorId == user.Id || await UserManager.IsInRoleAsync(user, "Admin") || await UserManager.IsInRoleAsync(user, "Moderator"))
+                    {
+                        <i class="fa-solid fa-trash discussion-action" id="delete-post" style="margin-top: -45px;"></i>
+                    }
                 }
-            }
-            
-        </div>
-
+            </div>
+        
         <h1 class="discussion-title">@discussion.Title</h1>
 
         <p class="discussion-text">@discussion.Content</p>
@@ -118,8 +120,11 @@
                         <img src="@comment.User.AvatarUrl" alt="Аватар" class="comment-avatar">
                         <div class="comment-content">
                             <div class="comment-header">
-                                <span class="comment-user">@comment.User.UserName</span>
-                                <span class="comment-time">@comment.CreatedAt</span>
+                                <a href="@Url.Action("Profile", "Home", new {Id = comment.UserId})">
+                                    <span class="comment-user">@comment.User.UserName</span>
+                                    <span class="comment-time">@comment.CreatedAt</span>
+                                </a>
+
                                 @if (SignInManager.IsSignedIn(User))
                                 {
                                     if (discussion.AuthorId == user.Id || await UserManager.IsInRoleAsync(user, "Admin") || await UserManager.IsInRoleAsync(user, "Moderator"))

@@ -1,114 +1,135 @@
-﻿@{
+﻿@using ArtCosplay.Data
+@using ArtCosplay.Data.DB
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+@inject AppDbContext DbContext
+
+@{
     ViewData["Title"] = "Профиль";
+
+    string? profileId = ViewData["Id"]!.ToString();
+    int page = Convert.ToInt32(ViewData["Page"]!.ToString());
+    var user = await UserManager.GetUserAsync(User);
+    var profileUser = DbContext.Users
+        .Include(x => x.Posts)
+        .Include(x => x.Likes)
+        .Include(x => x.Comments)
+        .First(x => x.Id == profileId);
+
+    List<MainPagePost> posts = DbContext.Posts
+        .Include(x => x.Likes)
+        .Include(x => x.Comments)
+        .Include(x => x.Author)
+        .Where(x => x.AuthorId == profileUser.Id)
+        .Select(x => new MainPagePost { Post = x, CreatedAt = x.CreatedAt })
+        .ToList();
+
+    posts.AddRange(DbContext.Discussions
+        .Include(x => x.Likes)
+        .Include(x => x.Comments)
+        .Include(x => x.Author)
+        .Where(x => x.AuthorId == profileUser.Id)
+        .Select(x => new MainPagePost { Discussion = x, CreatedAt = x.CreatedAt }));
+
+    posts = posts.OrderByDescending(x => x.CreatedAt).ToList();
+    int maxPage = Convert.ToInt32(Math.Ceiling(posts.ToList().Count / 5.0));
+
+    if(page <= 0)
+    {
+        page = 1;
+    }
+    else if (page > maxPage)
+    {
+        page = maxPage;
+    }
 }
 
 <div class="main-container">
     <aside class="profile-sidebar">
         <div class="profile-header">
-            <img src="sakuraart.jpg" alt="Аватар пользователя" class="profile-avatar">
-            <h2 class="profile-name">Sakura_Cos</h2>
-            <div class="profile-status">Косплей - это искусство!</div>
+            <img src="@profileUser.AvatarUrl" alt="Аватар пользователя" class="profile-avatar">
+            <h2 class="profile-name">@profileUser.UserName</h2>
         </div>
 
         <div class="profile-stats">
             <div class="stat-item">
-                <div class="stat-number">1.2K</div>
+                <div class="stat-number"><i class="fa-solid fa-heart"></i> @profileUser.Likes.Count</div>
                 <div class="stat-label">Лайков</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number">47</div>
+                <div class="stat-number"><i class="fa-solid fa-signs-post"></i> @posts.Count</div>
                 <div class="stat-label">Постов</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number">326</div>
+                <div class="stat-number"><i class="fa-solid fa-message"></i> @profileUser.Comments.Count</div>
                 <div class="stat-label">Комментов</div>
             </div>
         </div>
 
         <div class="profile-bio">
-            Люблю аниме, косплей и рисование. Участвую в конкурсах с 2023 года.
-            Мои любимые аниме: Наруто, Атака Титанов, Токийский Гуль.
+            @profileUser.Bio
         </div>
 
         <div class="profile-actions">
-            <a href="#" class="profile-button">Редактировать профиль</a>
-            <a href="#" class="profile-button secondary">Настройки</a>
-            <a href="#" class="profile-button secondary">Добавить пост</a>
+            @if(user != null)
+            {
+                @if(user.Id == profileUser.Id)
+                {
+                    <a href="#" class="profile-button">Редактировать профиль</a>
+                }
+            }
         </div>
     </aside>
 
     <main class="main-content">
-        <article class="post">
-            <div class="post-header">
-                <img src="sakuraart.jpg" alt="Аватар Sakura_Cos" class="post-avatar">
-                <div>
-                    <span class="post-user">Sakura_Cos</span>
-                    <span class="post-time">2 часа назад</span>
+        @foreach (var item in posts.Chunk(5).ElementAt(page - 1))
+        {
+            <article class="post">
+                <div class="post-header">
+                    <img src="@profileUser.AvatarUrl" alt="Аватар" class="post-avatar">
+                    <div>
+                        <span class="post-user">@profileUser.UserName</span>
+                        <span class="post-time">@item.CreatedAt</span>
+                    </div>
                 </div>
-            </div>
-            <img src="7700e2751f5cccf07a581f23a64cca58.jpg" alt="Косплей на Сакуру" class="post-image">
-            <p class="post-text">Закончила свой новый косплей на Сакуру из Наруто! Как вам? 😊 #naruto #sakura #cosplay</p>
-            <div class="post-actions">
-                <div class="post-action">
-                    <i class="far fa-thumbs-up"></i>
-                    <span>56</span>
-                </div>
-                <div class="post-action">
-                    <i class="far fa-comment"></i>
-                    <span>23</span>
-                </div>
-            </div>
-        </article>
-
-        <article class="post">
-            <div class="post-header">
-                <img src="sakuraart.jpg" alt="Аватар Sakura_Cos" class="post-avatar">
-                <div>
-                    <span class="post-user">Sakura_Cos</span>
-                    <span class="post-time">3 дня назад</span>
-                </div>
-            </div>
-            <img src="luffycosplay.jpg" alt="Косплей на Луффи" class="post-image">
-            <p class="post-text">Мой первый серьезный косплей#attackontitan #mikasa #cosplay</p>
-            <div class="post-actions">
-                <div class="post-action">
-                    <i class="far fa-thumbs-up"></i>
-                    <span>56</span>
-                </div>
-                <div class="post-action">
-                    <i class="far fa-comment"></i>
-                    <span>23</span>
-                </div>
-            </div>
-        </article>
-
-        <article class="post">
-            <div class="post-header">
-                <img src="sakuraart.jpg" alt="Аватар Sakura_Cos" class="post-avatar">
-                <div>
-                    <span class="post-user">Sakura_Cos</span>
-                    <span class="post-time">1 неделя назад</span>
-                </div>
-            </div>
-            <img src="sakuraart.jpg" alt="Арт с Хинатой" class="post-image">
-            <p class="post-text">Попробовала нарисовать#naruto #hinata #animeart</p>
-            <div class="post-actions">
-                <div class="post-action">
-                    <i class="far fa-thumbs-up"></i>
-                    <span>56</span>
-                </div>
-                <div class="post-action">
-                    <i class="far fa-comment"></i>
-                    <span>23</span>
-                </div>
-            </div>
-        </article>
+                <a href="@Url.Action(item.Post != null ? "Post" : "Discussion", "Home", new {Id = item.Post != null ? item.Post.PostId : item.Discussion.DiscussionId})">
+                    <h3 class="post-title">@(item.Post == null ? item.Discussion.Title : item.Post.Title)</h3>
+                    @if (item.Post != null)
+                    {
+                        <img src="@item.Post.ImageUrl" alt="Пост" class="post-image">
+                    }
+                    <p class="post-text">@(item.Post == null ? item.Discussion.Content : item.Post.Content)</p>
+                    <div class="post-actions">
+                        <div class="post-action">
+                            <i class="far fa-thumbs-up"></i>
+                            <span>@(item.Post == null ? item.Discussion.Likes.Count : item.Post.Likes.Count)</span>
+                        </div>
+                        <div class="post-action">
+                            <i class="far fa-comment"></i>
+                            <span>@(item.Post == null ? item.Discussion.Comments.Count : item.Post.Comments.Count)</span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+        }
 
         <div class="pagination">
-            <a href="#" class="page-number active">1</a>
-            <a href="#" class="page-number">2</a>
-            <a href="#" class="page-number">3</a>
-            <a href="#" class="page-number">4</a>
+            @if (page != 1)
+            {
+                <a href="@Url.Action("Profile", "Home", new {Id = profileId, Page = page - 1})" class="page-number">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            }
+            <p class="page-number active">@(page)</p>
+            @if (page != maxPage)
+            {
+                <a href="@Url.Action("Profile", "Home", new {Id = profileId, Page = page + 1})" class="page-number">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            }
         </div>
     </main>
 </div>

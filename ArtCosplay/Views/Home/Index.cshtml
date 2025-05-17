@@ -1,5 +1,34 @@
-﻿@{
+﻿@using ArtCosplay.Data
+@using ArtCosplay.Data.DB
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+
+@inject AppDbContext DbContext
+@inject SignInManager<User> SignInManager
+
+
+@{
     ViewData["Title"] = "Главная";
+
+    List<MainPagePost> posts = DbContext.Posts
+    .Include(x => x.Likes)
+    .Include(x => x.Comments)
+    .Include(x => x.Author)
+    .Select(x => new MainPagePost { Post = x, CreatedAt = x.CreatedAt })
+    .ToList();
+
+    posts.AddRange(DbContext.Discussions
+        .Include(x => x.Likes)
+        .Include(x => x.Comments)
+        .Include(x => x.Author)
+        .Select(x => new MainPagePost { Discussion = x, CreatedAt = x.CreatedAt }));
+
+    posts = posts.OrderByDescending(x => x.CreatedAt).ToList();
+
+    if(posts.Count > 5)
+    {
+        posts = posts.Chunk(5).ElementAt(0).ToList();
+    }
 }
 
 <div class="main-container">
@@ -40,78 +69,53 @@
     </aside>
         
     <main class="main-content">
-        <article class="post">
-            <div class="post-header">
-                <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Аватар Sakura_Cos" class="post-avatar">
-                <div>
-                    <span class="post-user">Sakura_Cos</span>
-                    <span class="post-time">2 часа назад</span>
-                </div>
-            </div>
-            <img src="7700e2751f5cccf07a581f23a64cca58.jpg" alt="Косплей на Сакуру" class="post-image">
-            <p class="post-text">Закончила свой новый косплей на Сакуру из Наруто! Как вам? 😊 #naruto #sakura #cosplay</p>
-            <div class="post-actions">
-                <div class="post-action">
-                    <i class="far fa-thumbs-up"></i>
-                    <span>56</span>
-                </div>
-                <div class="post-action">
-                    <i class="far fa-comment"></i>
-                    <span>23</span>
-                </div>
-            </div>
-        </article>
-            
-        <article class="post">
-            <div class="post-header">
-                <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Аватар Anime_Artist" class="post-avatar">
-                <div>
-                    <span class="post-user">Anime_Artist</span>
-                    <span class="post-time">5 часов назад</span>
-                </div>
-            </div>
-            <img src="8e7c8c41f09314f658d115c6b1cea306.jpg" alt="Арт с Леви" class="post-image">
-            <p class="post-text">Новый арт с Леви из Атаки Титанов. Пытался передать его крутой характер ✍️ #attackontitan #levi #animeart</p>
-            <div class="post-actions">
-                <div class="post-action">
-                    <i class="far fa-thumbs-up"></i>
-                    <span>56</span>
-                </div>
-                <div class="post-action">
-                    <i class="far fa-comment"></i>
-                    <span>23</span>
-                </div>
-            </div>
-        </article>
-            
-        <article class="post">
-            <div class="post-header">
-                <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Аватар Cosplay_Newbie" class="post-avatar">
-                <div>
-                    <span class="post-user">Cosplay_Newbie</span>
-                    <span class="post-time">1 день назад</span>
-                </div>
-            </div>
-            <img src="MIKU_SP.png" alt="Косплей на Мику" class="post-image">
-            <p class="post-text">Ребята, помогите советом! Хочу сделать косплей на Мику из Vocaloid, но не знаю, с чего начать. Какие материалы лучше использовать для парика? И где найти хорошие выкройки для костюма? #help #vocaloid #miku</p>
-            <div class="post-actions">
-                <div class="post-action">
-                    <i class="far fa-thumbs-up"></i>
-                    <span>56</span>
-                </div>
-                <div class="post-action">
-                    <i class="far fa-comment"></i>
-                    <span>23</span>
-                </div>
-            </div>
-        </article>
+        @if(posts.Count != 0)
+        {
+            @foreach (var item in posts)
+            {
+                <article class="post">
+                    <a href="@Url.Action("Profile", "Home", new {Id = item.Post != null ? item.Post.AuthorId : item.Discussion.AuthorId})">
+                        <div class="post-header">
+                            <img src="@(item.Post == null ? item.Discussion.Author.AvatarUrl : item.Post.Author.AvatarUrl)" alt="Аватар" class="post-avatar">
+                            <div>
+                                <span class="post-user">@(item.Post == null ? item.Discussion.Author.UserName : item.Post.Author.UserName)</span>
+                                <span class="post-time">@item.CreatedAt.ToString()</span>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="@Url.Action(item.Post != null ? "Post" : "Discussion", "Home", new {Id = item.Post != null ? item.Post.PostId : item.Discussion.DiscussionId})">
+                        <h3 class="post-title">@(item.Post == null ? item.Discussion.Title : item.Post.Title)</h3>
+                        @if (item.Post != null)
+                        {
+                            <img src="@item.Post.ImageUrl" alt="Пост" class="post-image">
+                        }
+                        <p class="post-text">@(item.Post == null ? item.Discussion.Title : item.Post.Content)</p>
+                        <div class="post-actions">
+                            <div class="post-action">
+                                <i class="far fa-thumbs-up"></i>
+                                <span>@(item.Post == null ? item.Discussion.Likes.Count : item.Post.Likes.Count)</span>
+                            </div>
+                            <div class="post-action">
+                                <i class="far fa-comment"></i>
+                                <span>@(item.Post == null ? item.Discussion.Comments.Count : item.Post.Comments.Count)</span>
+                            </div>
+                        </div>
+                    </a>
+                </article>
+                
+            }
+        }
+        else
+        {
+            <span>Ещё нет обсуждений или артов/косплеев!</span>
+        }
 
-        <div class="pagination">
+@*         <div class="pagination">
             <a href="#" class="page-number active">1</a>
             <a href="#" class="page-number">2</a>
             <a href="#" class="page-number">3</a>
             <a href="#" class="page-number">4</a>
-        </div>
+        </div> *@
     </main>
         
     <aside class="news-sidebar">

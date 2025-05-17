@@ -18,11 +18,15 @@ fetch('/User/GetCurrentUser', {method : 'GET'})
 function createComment(data) {
   const commentHTML = `
     <div class="comment-item">
-      <img src="${data.avatar}" alt="Аватар" class="comment-avatar">
+      <a href="/Home/Profile/${data.userId}">
+        <img src="${data.avatar}" alt="Аватар" class="comment-avatar">
+      </a>
       <div class="comment-content">
         <div class="comment-header">
-          <span class="comment-user">${data.username}</span>
-          <span class="comment-time">${data.time}</span>
+          <a href="/Home/Profile/${data.userId}">
+             <span class="comment-user">${data.username}</span>
+            <span class="comment-time">${data.time}</span>
+          </a>
           <i class="fa-solid fa-trash discussion-action" name="delete-comment" style="margin-left: auto;" comment-id="${data.commentId}"></i>
         </div>
         <p class="comment-text">${data.text}</p>
@@ -95,6 +99,7 @@ function addComment()
             var data = {
                 avatar: user.avatarUrl,
                 username: user.userName,
+                userId: user.id,
                 time: new Date().toISOString().replace('T', ' ').slice(0, 19),
                 text: contentBox.value,
                 commentId: json['commentId'],

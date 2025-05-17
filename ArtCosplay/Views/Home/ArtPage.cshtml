@@ -97,8 +97,9 @@
 
         @foreach(var item in toShow)
         {
-            <a href="@Url.Action("Post", "Home", new { id = item.PostId})" style="text-decoration: none;">
-                <div class="art-item">
+            
+            <div class="art-item">
+                <a href="@Url.Action("Profile", "Home", new {Id = item.AuthorId})">
                     <div class="art-header">
                         <img src="@item.Author.AvatarUrl" alt="Аватар" class="art-avatar">
                         <div>
@@ -106,6 +107,8 @@
                             <span class="art-time">@item.CreatedAt</span>
                         </div>
                     </div>
+                </a>
+                <a href="@Url.Action("Post", "Home", new { id = item.PostId})" style="text-decoration: none;">
                     <p class="art-title">@item.Title</p>
                     <img src="@item.ImageUrl" alt="Арт" class="art-image">
                     <p class="art-text">@item.Content</p>
@@ -119,8 +122,8 @@
                             <span>@item.Comments.Count</span>
                         </div>
                     </div>
-                </div>
-            </a>
+                </a>
+            </div>
         }
 
         @if (posts.Count != 0)

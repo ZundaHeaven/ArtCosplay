@@ -65,8 +65,8 @@
 
         @foreach (var discussion in toShow)
         {
-            <a href="/Home/Discussion/@discussion.DiscussionId" style="text-decoration: none;">
-                <div class="discussion-item">
+            <div class="discussion-item">
+                <a href="@Url.Action("Profile", "Home", new {Id = discussion.AuthorId})">
                     <div class="discussion-header">
                         <img src="@discussion.Author.AvatarUrl" alt="Аватар" class="discussion-avatar">
                         <div>
@@ -74,9 +74,11 @@
                             <span class="discussion-time">@discussion.CreatedAt</span>
                         </div>
                     </div>
+                </a>
+                <a href="/Home/Discussion/@discussion.DiscussionId" style="text-decoration: none;">
                     <h3 class="discussion-title">@discussion.Title</h3>
                     <p class="discussion-text">@discussion.Content</p>
-                    @*<div class="discussion-tags">
+                    @*<div class="discussion-tags pusyn">
                         <span class="discussion-tag">#реквизит</span>
                         <span class="discussion-tag">#советы</span>
                         <span class="discussion-tag">#берсерк</span>
@@ -91,8 +93,8 @@
                             <span>@discussion.Comments.Count</span>
                         </div>
                     </div>
-                </div>
-            </a>
+                </a>
+            </div>
         }
         @if(discussions.Count != 0)
         {

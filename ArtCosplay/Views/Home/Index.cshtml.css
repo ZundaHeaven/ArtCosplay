@@ -57,12 +57,18 @@
     font-size: 12px;
     color: #777;
 }
-        
+
 .main-content {
-    display: grid;
+    display: flex;
     gap: 20px;
+    flex-direction: column;
 }
-        
+
+.main-content a {
+    text-decoration: none;
+    color: black;
+}
+     
 .post {
     background-color: rgba(255, 255, 255, 0.85);
     border-radius: 8px;
@@ -111,11 +117,15 @@
     border: 1px solid rgba(106, 17, 203, 0.3);
     transition: transform 0.3s;
 }
-        
-.post-image:hover {
-    transform: scale(1.01);
+
+.post-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #444;
+    font-family: 'Comic Sans MS';
 }
-        
+
 .post-text {
     margin-bottom: 10px;
     line-height: 1.4;

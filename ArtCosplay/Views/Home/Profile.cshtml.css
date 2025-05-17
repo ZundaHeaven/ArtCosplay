@@ -1,6 +1,6 @@
 ﻿.main-container {
     display: grid;
-    grid-template-columns: 250px 1fr;
+    grid-template-columns: 350px 1fr;
     gap: 20px;
     max-width: 1200px;
     margin: 20px auto;
@@ -131,6 +131,19 @@
     border: 1px solid rgba(255, 255, 255, 0.3);
     transition: transform 0.3s;
 }
+
+.post-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #444;
+    font-family: 'Comic Sans MS';
+}
+
+.post a {
+    color: #444;
+    text-decoration: none;
+}
         
 .post:hover {
     transform: translateY(-5px);
@@ -172,11 +185,7 @@
     margin: auto;
     margin-bottom: 20px;
 }
-        
-.post-image:hover {
-    transform: scale(1.01);
-}
-        
+
 .post-text {
     margin-bottom: 10px;
     line-height: 1.4;
