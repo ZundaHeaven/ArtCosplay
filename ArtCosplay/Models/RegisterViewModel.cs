@@ -5,7 +5,7 @@ namespace ArtCosplay.Models
     public class RegisterViewModel
     {
         [Required]
-        [RegularExpression("^[A-Za-z0-9]{4,16}$", ErrorMessage = "Username must be 4-16 characters long and contain only letters (A-Z, a-z) and numbers (0-9)")]
+        [RegularExpression("^[A-Za-z0-9]{4,16}$", ErrorMessage = "Имя пользователя должно быть длиной от 4 до 16 символов и содержать только буквы (A-Z, a-z) и цифры (0-9)")]
         [Length(4, 16)]
         public string Name { get; set; } = null!;
 

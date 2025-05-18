@@ -1,0 +1,63 @@
+﻿@using ArtCosplay.Data.DB
+@using Microsoft.AspNetCore.Identity
+
+@inject UserManager<User> UserManager
+@model EditUserViewModel
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+}
+
+<div class="edit-profile">
+    <form method="post" asp-action="ProfileEdit" asp-controller="Home" class="edit-form" id="editForm" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly"></div>
+        <div class="form-group">
+            <label class="form-label" for="username">Никнейм:</label>
+            <input type="text" id="username" class="form-input" value="@user.UserName" disabled>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="email">Электронная почта:</label>
+            <input type="email" id="email" class="form-input" value="@user.Email" disabled>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="bio">Описание профиля:</label>
+            <textarea id="bio" class="form-input" rows="4" asp-for="Bio"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Аватар:</label>
+            <div class="avatar-upload">
+                <img src="@user.AvatarUrl" class="avatar-preview" id="avatarPreview">
+                <div class="file-input">
+                    <input type="file" id="avatar" accept="image/*" asp-for="Avatar" type="file">
+                    <label for="avatar">Выбрать файл</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="currentPassword">Текущий пароль:</label>
+            <input type="password" id="currentPassword" class="form-input" asp-for="OldPassword">
+            <p class="password-note">*Оставьте пустым, если не хотите менять пароль</p>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="newPassword">Новый пароль:</label>
+            <input type="password" id="newPassword" class="form-input" asp-for="NewPassword">
+        </div>
+
+        <button type="submit" class="profile-button">Сохранить изменения</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('avatar').addEventListener('change', function(e) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            document.getElementById('avatarPreview').src = reader.result;
+        }
+        reader.readAsDataURL(e.target.files[0]);
+    });
+</script>

@@ -23,6 +23,120 @@ namespace ArtCosplay.Controllers
 
         public IActionResult Index() => View();
         public IActionResult Privacy() => View();
+        public IActionResult ArtPage(ArtPageFindViewModel model) => View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(model ?? new ArtPageFindViewModel(), new CreatePostViewModel()));
+        public IActionResult ShopPage() => View();
+        public IActionResult CharactersPage() => View();
+        public IActionResult Publication() => View();
+        public IActionResult ShoppingItem() => View();
+        public IActionResult About() => View();
+        public IActionResult FAQ() => View();
+        public IActionResult Rules() => View();
+        public async Task<IActionResult> ProfileEdit()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+                return RedirectToAction("Index");
+
+            return View(new EditUserViewModel
+            {
+                Bio = user.Bio
+            });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ProfileEdit(EditUserViewModel model)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+
+                if (user == null) return BadRequest(new
+                {
+                    Status = "error",
+                    Message = "User is null"
+                });
+
+                if(!ModelState.IsValid)
+                {
+                    ModelState.AddModelError(string.Empty, "Неверная валидация!");
+                    return View(model);
+                }
+
+                user.Bio = model.Bio;
+
+                if(model.OldPassword != null)
+                {
+                    if (model.NewPassword == null)
+                    {
+                        ModelState.AddModelError(string.Empty, "Чтобы изменить пароль, сначала заполните значение!");
+                        return View(model);
+                    }
+
+                    var result = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, model.OldPassword);
+                    
+                    if (result != PasswordVerificationResult.Success)
+                    {
+                        ModelState.AddModelError(string.Empty, "Пароли не совпадают!");
+                        return View(model);
+                    }
+
+                    user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, model.NewPassword);
+                }
+
+                if (model.Avatar != null)
+                {
+                    List<string> acceptableExtensions =
+                        [".jpg", ".jpeg", ".png", ".webp"];
+
+                    string extension = Path.GetExtension(model.Avatar.FileName);
+
+                    if (model.Avatar.Length > 1024 * 1024)
+                    {
+                        ModelState.AddModelError(string.Empty, "Размер файла не должен превышать 1 мб!");
+                        return View(model);
+                    }
+
+                    if (!(acceptableExtensions.Contains(extension)
+                        && model.Avatar.ContentType.ToLower().Contains("image")))
+                    {
+                        ModelState.AddModelError(string.Empty, "Формат файла не поддерживатся!");
+                        return View(model);
+                    }
+
+                    string path = $"/data/Avatars/{HashedPathGenerator.GeneratePath(model.Avatar)}";
+
+                    Console.WriteLine($"LOOOOOOOOOOOL PATH {path}");
+
+                    using (var fileStream = new FileStream($"{_appEnvironment.WebRootPath}{path}", FileMode.Create))
+                    {
+                        await model.Avatar.CopyToAsync(fileStream);
+                    }
+
+                    user.AvatarUrl = path;
+                }
+
+                _appDbContext.Users.Update(user);
+                await _appDbContext.SaveChangesAsync();
+
+                return RedirectToAction("Profile");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + ex.Source + ex.StackTrace);
+
+                ModelState.AddModelError(string.Empty, "Ошибка сервера");
+                return View(model);
+            }
+        }
+
+        public IActionResult DiscusPage(int? page, string? filter)
+        {
+            ViewData["Filter"] = filter;
+            ViewData["Page"] = page ?? 1;
+            return View();
+        }
+
         public async Task<IActionResult> Profile(string? id, int? page)
         {
             try
@@ -41,7 +155,7 @@ namespace ArtCosplay.Controllers
                 }
                 else
                 {
-                    if(_appDbContext.Users.FirstOrDefault(x => x.Id == id) == null)
+                    if (_appDbContext.Users.FirstOrDefault(x => x.Id == id) == null)
                     {
                         return NotFound();
                     }
@@ -56,22 +170,7 @@ namespace ArtCosplay.Controllers
                 _logger.LogError(ex.Message + ex.Source + ex.StackTrace);
                 return NotFound();
             }
-        } 
-        public IActionResult ArtPage(ArtPageFindViewModel model) => View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(model ?? new ArtPageFindViewModel(), new CreatePostViewModel()));
-        public IActionResult DiscusPage(int? page, string? filter)
-        {
-            ViewData["Filter"] = filter;
-            ViewData["Page"] = page ?? 1;
-            return View();
         }
-        public IActionResult ShopPage() => View();
-        public IActionResult CharactersPage() => View();
-        public IActionResult Publication() => View();
-        public IActionResult ShoppingItem() => View();
-        public IActionResult About() => View();
-        public IActionResult FAQ() => View();
-        public IActionResult Rules() => View();
-        public IActionResult ProfileChange() => View();
 
         [HttpPost]
         public async Task<IActionResult> ArtPage(CreatePostViewModel model)
@@ -92,17 +191,10 @@ namespace ArtCosplay.Controllers
                     return View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(new ArtPageFindViewModel(), model));
                 }
 
-                if (!ModelState.IsValid)
-                {
-                    ModelState.AddModelError(string.Empty, "Неверная валидация!");
-                    return View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(new ArtPageFindViewModel(), model));
-                }
-
                 if (model.Image.Length > 4096 * 1024) {
                     ModelState.AddModelError(string.Empty, "Размер файла не должен превышать 4 мб!");
                     return View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(new ArtPageFindViewModel(), model));
                 }
-
 
                 List<string> acceptableExtensions =
                     [".jpg", ".jpeg", ".png", ".webp"];
@@ -116,15 +208,9 @@ namespace ArtCosplay.Controllers
                     return View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(new ArtPageFindViewModel(), model));
                 }
 
+                string path = $"/data/Posts/{HashedPathGenerator.GeneratePath(model.Image)}";
 
-                string path;
-                using (SHA256 mySHA256 = SHA256.Create())
-                {
-                    byte[] hash = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(model.Image.FileName + DateTime.Now.ToString()));
-                    path = "/data/Posts/" + new string(BitConverter.ToString(hash).Where(x => x != '-').ToArray()) + extension;
-                }
-
-                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                using (var fileStream = new FileStream($"{_appEnvironment.WebRootPath}{path}", FileMode.Create))
                 {
                     await model.Image.CopyToAsync(fileStream);
                 }

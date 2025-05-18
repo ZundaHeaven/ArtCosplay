@@ -37,6 +37,11 @@
     posts = posts.OrderByDescending(x => x.CreatedAt).ToList();
     int maxPage = Convert.ToInt32(Math.Ceiling(posts.ToList().Count / 5.0));
 
+    if(maxPage == 0)
+    {
+        maxPage = 1;
+    }
+
     if(page <= 0)
     {
         page = 1;
@@ -44,6 +49,13 @@
     else if (page > maxPage)
     {
         page = maxPage;
+    }
+
+    IEnumerable<MainPagePost> toShow = new List<MainPagePost>();
+
+    if (posts.Count != 0)
+    {
+        toShow = posts.Chunk(5).ElementAt(page - 1).ToList();
     }
 }
 
@@ -56,7 +68,7 @@
 
         <div class="profile-stats">
             <div class="stat-item">
-                <div class="stat-number"><i class="fa-solid fa-heart"></i> @profileUser.Likes.Count</div>
+                <div class="stat-number"><i class="fa-solid fa-heart"></i> @posts.Sum(x => x.Post == null ? x.Discussion.Likes.Count : x.Post.Likes.Count)</div>
                 <div class="stat-label">Лайков</div>
             </div>
             <div class="stat-item">
@@ -64,7 +76,7 @@
                 <div class="stat-label">Постов</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number"><i class="fa-solid fa-message"></i> @profileUser.Comments.Count</div>
+                <div class="stat-number"><i class="fa-solid fa-message"></i> @posts.Sum(x => x.Post == null ? x.Discussion.Comments.Count : x.Post.Comments.Count)</div>
                 <div class="stat-label">Комментов</div>
             </div>
         </div>
@@ -78,14 +90,14 @@
             {
                 @if(user.Id == profileUser.Id)
                 {
-                    <a href="#" class="profile-button">Редактировать профиль</a>
+                    <a href="@Url.Action("ProfileEdit", "Home")" class="profile-button">Редактировать профиль</a>
                 }
             }
         </div>
     </aside>
 
     <main class="main-content">
-        @foreach (var item in posts.Chunk(5).ElementAt(page - 1))
+        @foreach (var item in toShow)
         {
             <article class="post">
                 <div class="post-header">
@@ -116,20 +128,27 @@
             </article>
         }
 
-        <div class="pagination">
-            @if (page != 1)
-            {
-                <a href="@Url.Action("Profile", "Home", new {Id = profileId, Page = page - 1})" class="page-number">
-                    <i class="fas fa-chevron-left"></i>
-                </a>
-            }
-            <p class="page-number active">@(page)</p>
-            @if (page != maxPage)
-            {
-                <a href="@Url.Action("Profile", "Home", new {Id = profileId, Page = page + 1})" class="page-number">
-                    <i class="fas fa-chevron-right"></i>
-                </a>
-            }
-        </div>
+        @if(posts.Count == 0)
+        {
+            <span>Нет ещё постов</span>
+        }
+        else
+        {
+            <div class="pagination">
+                @if (page != 1)
+                {
+                    <a href="@Url.Action("Profile", "Home", new {Id = profileId, Page = page - 1})" class="page-number">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                }
+                <p class="page-number active">@(page)</p>
+                @if (page != maxPage)
+                {
+                    <a href="@Url.Action("Profile", "Home", new {Id = profileId, Page = page + 1})" class="page-number">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                }
+            </div>
+        }
     </main>
 </div>
