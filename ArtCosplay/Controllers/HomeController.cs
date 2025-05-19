@@ -21,18 +21,33 @@ namespace ArtCosplay.Controllers
         public IActionResult Index() => View();
         public IActionResult Privacy() => View();
         public IActionResult ArtPage(ArtPageFindViewModel? model) => View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(model ?? new ArtPageFindViewModel(), new CreatePostViewModel()));
-        public IActionResult ShopPage() => View();
+        public IActionResult ShopPage(ShopPageFindViewModel? model) => View(new Tuple<ShopPageFindViewModel, CreateShoppingItemViewModel>(model ?? new ShopPageFindViewModel(), new CreateShoppingItemViewModel()));
         public IActionResult CharactersPage(CharacterPageViewModel? model) => View(model ?? new CharacterPageViewModel());
-        public IActionResult Character(int id, CharacterViewModel? model)
+        public IActionResult Character(int id, int? page)
         {
             if (_appDbContext.Characters.FirstOrDefault(x => x.CharacterId == id) == null)
                 return NotFound();
 
             ViewData["Id"] = id;
-            return View(model ?? new CharacterViewModel());
+            ViewData["Page"] = page ?? 1;
+
+            return View();
         }
         public IActionResult Publication() => View();
-        public IActionResult ShoppingItem() => View();
+        public IActionResult ShoppingItem(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var item = _appDbContext.Products.FirstOrDefault(x => x.ProductId == id);
+
+            if(item == null)
+                return NotFound();
+
+            ViewData["Id"] = id;
+
+            return View();
+        }
         public IActionResult About() => View();
         public IActionResult FAQ() => View();
         public IActionResult Rules() => View();
@@ -285,6 +300,76 @@ namespace ArtCosplay.Controllers
                 _logger.LogError(ex.Message);
                 ModelState.AddModelError(string.Empty, "Ошибка сервера");
                 return View(model);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ShopPage(CreateShoppingItemViewModel model)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+
+                if (user == null) return BadRequest(new
+                {
+                    Status = "error",
+                    Message = "User is null"
+                });
+
+                if (!ModelState.IsValid)
+                {
+                    ModelState.AddModelError(string.Empty, "Неверная валидация!");
+                    return View(new Tuple<ShopPageFindViewModel, CreateShoppingItemViewModel>(new ShopPageFindViewModel(), model));
+                }
+
+                if (model.Image.Length > 4096 * 1024)
+                {
+                    ModelState.AddModelError(string.Empty, "Размер файла не должен превышать 4 мб!");
+                    return View(new Tuple<ShopPageFindViewModel, CreateShoppingItemViewModel>(new ShopPageFindViewModel(), model));
+                }
+
+                List<string> acceptableExtensions =
+                    [".jpg", ".jpeg", ".png", ".webp"];
+
+                string extension = Path.GetExtension(model.Image.FileName);
+
+                if (!(acceptableExtensions.Contains(extension)
+                    && model.Image.ContentType.ToLower().Contains("image")))
+                {
+                    ModelState.AddModelError(string.Empty, "Формат файла не поддерживатся!");
+                    return View(new Tuple<ShopPageFindViewModel, CreateShoppingItemViewModel>(new ShopPageFindViewModel(), model));
+                }
+
+                string path = $"/data/Products/{HashedPathGenerator.GeneratePath(model.Image)}";
+
+                using (var fileStream = new FileStream($"{_appEnvironment.WebRootPath}{path}", FileMode.Create))
+                {
+                    await model.Image.CopyToAsync(fileStream);
+                }
+
+                Console.WriteLine("FDSFSDFDSFSDFSDFSDF" + model.Price);
+
+                var entity = _appDbContext.Products.Add(new Product
+                {
+                    Title = model.Title,
+                    Description = model.Content,
+                    ImageUrl = path,
+                    Type = model.Type,
+                    SellerId = user.Id,
+                    City = model.City,
+                    Price = Convert.ToInt32(model.Price),
+                    IsAvailable = true
+                }).Entity;
+
+                _appDbContext.SaveChanges();
+
+                return RedirectToAction("ShoppingItem", "Home", new { id = entity.ProductId });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                ModelState.AddModelError(string.Empty, "Ошибка сервера");
+                return View(new Tuple<ShopPageFindViewModel, CreateShoppingItemViewModel>(new ShopPageFindViewModel(), model));
             }
         }
 

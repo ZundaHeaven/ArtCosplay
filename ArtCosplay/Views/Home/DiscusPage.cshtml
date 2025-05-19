@@ -12,8 +12,6 @@
 
     int discussionId = Convert.ToInt32(ViewData["DiscussionId"]);
 
-    Console.WriteLine("SADFDSFDSFSD " + ViewData["Page"]);
-
     int page = Convert.ToInt32(ViewData["Page"] ?? 1);
     string? filter = null;
     var discussions = DbContext.Discussions

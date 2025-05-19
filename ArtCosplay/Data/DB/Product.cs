@@ -14,8 +14,15 @@ namespace ArtCosplay.Data.DB
         [Required]
         public string Description { get; set; }
 
-        [Column(TypeName = "decimal(10, 2)")]
-        public decimal Price { get; set; }
+        [Required]
+        public int Price { get; set; }
+        [Required]
+        [MaxLength(30)]
+        public string City { get; set; }
+
+        [Required]
+        [MaxLength(30)]
+        public string Type { get; set; }
 
         [MaxLength(255)]
         public string ImageUrl { get; set; }

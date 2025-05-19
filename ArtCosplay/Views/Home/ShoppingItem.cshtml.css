@@ -1,12 +1,12 @@
 ﻿.product-container {
-    display: grid;
-    grid-template-columns: 1fr 350px;
+    display: flex;
     gap: 30px;
-    max-width: 1200px;
+    max-width: 1600px;
     margin: 30px auto;
     padding: 0 20px;
+    justify-content: center;
 }
-        
+
 .product-section {
     background-color: rgba(255, 255, 255, 0.85);
     border-radius: 10px;
@@ -14,13 +14,16 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(5px);
     border: 1px solid rgba(255, 255, 255, 0.3);
+    width: 80%;
+    max-width: 800px;
+    align-self: center;
 }
         
 .back-button {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+    background: linear-gradient(90deg, #6a11pcb 0%, #2575fc 100%);
     color: white;
     padding: 8px 16px;
     border-radius: 4px;
@@ -53,13 +56,15 @@
     gap: 15px;
     margin-bottom: 25px;
 }
-        
+
 .product-main-image {
     flex: 1;
-    height: 400px;
+    min-height: 300px;
+    max-height: 500px;
     object-fit: cover;
     border-radius: 8px;
     border: 2px solid rgba(106, 17, 203, 0.3);
+    max-width: 100%;
 }
         
 .product-thumbnails {
@@ -275,4 +280,14 @@
         
 .send-btn:hover {
     transform: translateY(-2px);
+}
+
+@media screen and (max-width: 1200px) {
+    .product-container {
+        flex-direction: column-reverse;
+    }
+
+    .chat-section {
+        position: static;
+    }
 }
