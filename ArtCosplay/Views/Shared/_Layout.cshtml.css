@@ -28,7 +28,7 @@ header {
     align-items: center;
     gap: 20px;
 }
-        
+
 .logo {
     font-size: 24px;
     font-weight: bold;
@@ -36,6 +36,12 @@ header {
     font-family: 'Comic Sans MS', cursive;
     color: #fff;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-decoration: none;
+    margin: 10px 0 10px 5px;
+}
+
+.sign-container {
+    margin: 5px;
 }
 
 .search-bar {
@@ -64,7 +70,17 @@ header {
 .search-bar button:hover {
     background-color: #2575fc;
 }
-        
+
+.bottom-navigation {
+    position: fixed;
+    bottom: 0;
+    background: linear-gradient(90deg, rgba(106, 17, 203, 0.9) 0%, rgba(37, 117, 252, 0.9) 100%);
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+    display: none;
+}
+   
 nav {
     display: flex;
     list-style: none;
@@ -81,6 +97,11 @@ nav {
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
     border: none;
     background-color: rgba(0, 0, 0, 0);
+}
+
+.bottom-navigation .nav-item {
+    margin-left: 0px;
+    font-weight: bold;
 }
 
 .nav-item:hover {
@@ -106,8 +127,7 @@ footer {
 .footer-container {
     max-width: 1200px;
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
     gap: 30px;
 }
 
@@ -139,7 +159,6 @@ footer {
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     font-size: 14px;
     color: #e0e0e0;
-    margin-bottom: 20px;
 }
 
 .anime-decoration {
@@ -160,4 +179,41 @@ footer {
     right: 50px;
     font-size: 80px;
     color: #2575fc;
+}
+
+.nav-item i {
+    display: flex;
+    justify-content: center;
+}
+
+@media screen and (max-width: 968px) {
+    .top-navigation {
+        display: none;
+    }
+
+    .bottom-navigation {
+        display: flex;
+        padding: 10px 0 10px;
+        z-index: 1;
+    }
+
+    .sign-container {
+        margin: 0;
+    }
+
+    .profile-sidebar {
+        position: static;
+    }
+
+    .nav-item {
+        margin: 0;
+    }
+
+    .copyright {
+        margin-bottom: 50px;
+    }
+
+    .footer-container {
+        flex-direction: column;
+    }
 }

@@ -3,10 +3,9 @@
 }
 
 .main-container {
-    display: grid;
-    grid-template-columns: 250px 1fr 250px;
+    display: flex;
     gap: 20px;
-    max-width: 1200px;
+    max-width: 1600px;
     margin: 20px auto;
     padding: 0 20px;
 }
@@ -21,7 +20,7 @@
     border: 1px solid rgba(255, 255, 255, 0.3);
     position: sticky;
     height: fit-content;
-    top: 85px;
+    top: 65px;
 }
 
 .sidebar-title {
@@ -52,16 +51,18 @@
     margin-bottom: 5px;
     color: #444;
 }
-        
+
 .event-date {
     font-size: 12px;
     color: #777;
+    width: 200px;
 }
 
 .main-content {
     display: flex;
     gap: 20px;
     flex-direction: column;
+    width: 100%;
 }
 
 .main-content a {
@@ -129,6 +130,7 @@
 .post-text {
     margin-bottom: 10px;
     line-height: 1.4;
+    min-width: 400px;
 }
 
 .post-actions {
@@ -204,4 +206,17 @@
     font-size: 12px;
     color: #777;
 }
-        
+
+@media screen and (max-width: 1200px) {
+    .main-container {
+        flex-direction: column-reverse;
+    }
+
+    .main-content {
+        order: 1;
+    }
+
+    .events-sidebar, .news-sidebar {
+        position: static;
+    }
+}

@@ -89,7 +89,7 @@
                         {
                             <img src="@item.Post.ImageUrl" alt="Пост" class="post-image">
                         }
-                        <p class="post-text">@(item.Post == null ? item.Discussion.Title : item.Post.Content)</p>
+                        <p class="post-text">@(item.Post == null ? item.Discussion.Content : item.Post.Content)</p>
                         <div class="post-actions">
                             <div class="post-action">
                                 <i class="far fa-thumbs-up"></i>

@@ -234,3 +234,13 @@
     color: white;
     transform: translateY(-3px);
 }
+
+@media screen and (max-width: 1200px) {
+    .main-container {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-sidebar {
+        position: static;
+    }
+}

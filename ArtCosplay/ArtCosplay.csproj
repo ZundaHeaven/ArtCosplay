@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\data\Avatars\" />
     <Folder Include="wwwroot\data\Posts\" />
   </ItemGroup>
 

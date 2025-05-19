@@ -6,5 +6,6 @@
         public string? Filter { get; set; }
         public string? Sort { get; set; }
         public string? FilterType { get; set; }
+        public int? CharacterId { get; set; }
     }
 }

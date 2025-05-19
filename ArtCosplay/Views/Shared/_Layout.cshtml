@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="~/ArtCosplay.styles.css" asp-append-version="true" />
     <link href="https://fonts.googleapis.com/css2?family=Comic+Sans+MS&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
 </head>
 <body style="background-color: #f0e6ff;background-image: url('/data/bg.jpg');background-size: cover;background-attachment: fixed;background-position: center;background-blend-mode: overlay;color: #333;display: flex !important;flex-direction: column !important;min-height: 100vh !important;">
     <div class="anime-decoration decoration-1">(≧▽≦)</div>
@@ -25,9 +26,9 @@
     <header>
         <div class="header-container">
             <div class="logo-container">
-                <a href="/" class="logo"  style="text-decoration: none;">Art-Cosplay</a>
+                <a href="/" class="logo">Art-Cosplay</a>
             </div>
-            <nav>
+            <nav class="top-navigation">
                 <a class="nav-item" href="@Url.Action("ArtPage", "Home")">Арты</a>
                 <a class="nav-item" href="@Url.Action("DiscusPage", "Home")">Обсуждения</a>
                 <a class="nav-item" href="@Url.Action("ShopPage", "Home")">Барахолка</a>
@@ -35,7 +36,7 @@
             </nav>
             @if (SignInManager.IsSignedIn(User))
             {
-                <div style="margin: 5px;">
+                <div class="sign-container">
                     <form method="post" asp-controller="User" asp-action="Logout" style="display: inline;">
                         <input class="nav-item" type="submit" value="Выйти" />
                     </form>
@@ -47,7 +48,7 @@
             }
             else
             {
-                <div style="margin: 15px;">
+                <div class="sign-container">
                     <a class="nav-item" href="@Url.Action("Registration", "User")">Регистрация</a>
                     <a class="nav-item" href="@Url.Action("Login", "User")">Авторизация</a>
                 </div>
@@ -61,6 +62,15 @@
         </main>
     </div>
 
+    <div>
+        <nav class="bottom-navigation">
+            <a class="nav-item" href="@Url.Action("ArtPage", "Home")"><i class="fa-solid fa-palette"></i> Арты</a>
+            <a class="nav-item" href="@Url.Action("DiscusPage", "Home")"><i class="fa-solid fa-comments"></i> Обсуждения</a>
+            <a class="nav-item" href="@Url.Action("ShopPage", "Home")"><i class="fa-solid fa-cart-shopping"></i> Барахолка</a>
+            <a class="nav-item" href="@Url.Action("CharactersPage", "Home")"><i class="fa-solid fa-paw"></i> Образы</a>
+        </nav>
+    </div>
+
     <footer>
         <div class="footer-container">
             <div class="footer-column">
@@ -71,9 +81,9 @@
             </div>
             <div class="footer-column">
                 <h3>Контакты</h3>
-                <a href="mailto:info@art-cosplay.ru">info@art-cosplay.ru</a>
-                <a href="tel:+79991234567">+7 (999) 123-45-67</a>
-                <p>Москва, ул. Анимешная, 15</p>
+                <a href="mailto:artcosplay@gmail.com">artcosplay@gmail.com</a>
+                <a href="tel:+375295461757">+375 (29) 546-17-57</a>
+                <p>Минск, ул. Энтузиастов, 125</p>
             </div>
             <div class="footer-column">
                 <h3>Полезные ссылки</h3>

@@ -51,8 +51,13 @@ namespace ArtCosplay.Controllers
         }
 
         [HttpGet]
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user != null)
+                return RedirectToAction("Index", "Home");
+
             return View();
         }
 
@@ -80,7 +85,15 @@ namespace ArtCosplay.Controllers
         }
 
         [HttpGet]
-        public IActionResult Registration() => View();
+        public async Task<IActionResult> Registration()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user != null)
+                return RedirectToAction("Index", "Home");
+
+            return View();
+        }
 
         [HttpPost]
         public async Task<IActionResult> Registration(RegisterViewModel model)
@@ -141,12 +154,17 @@ namespace ArtCosplay.Controllers
 
             return Ok(new
             {
-                user.Id,
-                user.UserName,
-                user.Email,
-                AvatarUrl = user.AvatarUrl,
-                user.LastLogin,
-                user.Bio
+                Status = "success",
+                Message = "User data was fetched!",
+                User = new
+                {
+                    user.Id,
+                    user.UserName,
+                    user.Email,
+                    AvatarUrl = user.AvatarUrl,
+                    user.LastLogin,
+                    user.Bio
+                }
             });
         }
 

@@ -41,13 +41,13 @@
     padding-bottom: 10px;
 }
 
-.catalog-search {
+::deep .catalog-search {
     display: flex;
     gap: 15px;
     margin-bottom: 25px;
 }
 
-.catalog-search input {
+::deep .catalog-search input {
     flex: 1;
     padding: 12px 20px;
     border: 1px solid #ddd;
@@ -58,7 +58,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.catalog-search button {
+::deep .catalog-search button {
     background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
     color: white;
     border: none;
@@ -70,18 +70,18 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.catalog-search button:hover {
+::deep .catalog-search button:hover {
     transform: translateY(-2px);
 }
 
-.catalog-filters {
+::deep .catalog-filters {
     display: flex;
     gap: 15px;
     margin-bottom: 25px;
     flex-wrap: wrap;
 }
 
-.filter-tab {
+::deep .filter-tab {
     padding: 8px 16px;
     border-radius: 20px;
     background-color: rgba(106, 17, 203, 0.1);
@@ -92,16 +92,16 @@
     font-size: 14px;
 }
 
-.filter-tab.active {
+::deep .filter-tab.active {
     background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
     color: white;
 }
 
-.filter-tab:hover {
+::deep .filter-tab:hover {
     background-color: rgba(106, 17, 203, 0.2);
 }
 
-.filter-select {
+::deep .filter-select {
     padding: 8px 16px;
     border: 1px solid #ddd;
     border-radius: 20px;
@@ -110,7 +110,7 @@
     font-size: 14px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
-        
+
 .characters-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -161,9 +161,8 @@
     color: #777;
     margin-bottom: 15px;
 }
-        
+
 .view-posts {
-    display: inline-block;
     background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
     color: white;
     padding: 8px 15px;
@@ -171,6 +170,9 @@
     text-decoration: none;
     font-size: 14px;
     transition: transform 0.3s;
+    width: 100%;
+    display: block;
+    text-align: center;
 }
         
 .view-posts:hover {

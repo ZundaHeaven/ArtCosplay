@@ -31,14 +31,13 @@
     }
 
     int maxPage = Convert.ToInt32(Math.Ceiling(discussions.ToList().Count / 5.0));
+
     if (page > maxPage)
-    {
         page = maxPage;
-    }
+    
     else if(page <= 0)
-    {
         page = 1;
-    }
+    
 
     var toShow = new List<Discussion>();
     var chunks = discussions.Chunk(5);

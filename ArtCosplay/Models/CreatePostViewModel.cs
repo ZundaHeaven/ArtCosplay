@@ -20,5 +20,8 @@ namespace ArtCosplay.Models
 
         [Required]
         public IFormFile Image { get; set; }
+
+        [Required]
+        public int CharacterId { get; set; }
     }
 }

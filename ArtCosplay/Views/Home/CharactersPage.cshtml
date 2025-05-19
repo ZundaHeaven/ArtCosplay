@@ -1,104 +1,112 @@
-﻿@{
+﻿@using ArtCosplay.Data
+@using ArtCosplay.Data.DB
+@using Microsoft.EntityFrameworkCore
+@model CharacterPageViewModel
+
+@inject AppDbContext DbContext
+
+@{
     ViewData["Title"] = "Каталог образов";
+
+    IEnumerable<Character> characters = DbContext.Characters
+        .Include(x => x.Posts);
+
+    if (Model.TextFilter != null)
+        characters = characters.Where(x => x.Name.ToLower().Contains(Model.TextFilter.ToLower()) || x.Description.ToLower().Contains(Model.TextFilter.ToLower()));
+
+    if(Model.PostTypeFilter != null)
+        characters = characters.Where(x => x.SourceName == Model.PostTypeFilter);
+
+    if(Model.SortType != null)
+        if (Model.SortType == "posts")
+            characters = characters.OrderByDescending(x => x.Posts.Count);
+
+    int page = Model.Page;
+    int maxPage = Convert.ToInt32(Math.Ceiling(characters.ToList().Count / 6.0));
+
+    if (maxPage == 0)
+        maxPage = 1;
+
+    if (page > maxPage)
+        page = maxPage;
+    else if (page <= 0)
+        page = 1;
+
+    var toShow = new List<Character>();
+    var chunks = characters.Chunk(6);
+
+    if (chunks.Count() != 0)
+    {
+        toShow = chunks.ElementAt(page - 1).ToList();
+    }
 }
 
 
 <div class="catalog-container">
     <h1 class="catalog-title">Каталог образов</h1>
 
-    <div class="catalog-search">
-        <input type="text" placeholder="Поиск персонажа или аниме...">
-        <button><i class="fas fa-search"></i> Найти</button>
-    </div>
+    <form asp-action="CharactersPage" asp-controller="Home" method="get" mod">
+        <div class="catalog-search">
+            <input type="text" placeholder="Поиск персонажа или аниме..." asp-for="TextFilter">
+            <button type="submit"><i class="fas fa-search"></i> Найти</button>
+        </div>
 
-    <div class="catalog-filters">
-        <button class="filter-tab active">Все персонажи</button>
-        <button class="filter-tab">Популярные</button>
-        <button class="filter-tab">Новые</button>
+        <div class="catalog-filters">
+            <select class="filter-select" asp-for="PostTypeFilter">
+                <option value="">Все</option>
+                <option value="anime">Аниме и Манга</option>
+                <option value="gaming">Японские видеоигры</option>
+                <option value="vocaloid">Вокалоиды и VTuber</option>
+                <option value="traditional">Традиционная культура</option>
+                <option value="subculture">Субкультурная мода</option>
+                <option value="idol">Идол-группы и J-Pop</option>
+            </select>
 
-        <select class="filter-select">
-            <option value="">Все аниме</option>
-            <option value="naruto">Наруто</option>
-            <option value="attackontitan">Атака Титанов</option>
-            <option value="vocaloid">Vocaloid</option>
-            <option value="cowboybebop">Ковбой Бибоп</option>
-        </select>
-
-        <select class="filter-select">
-            <option value="">Сортировка по умолчанию</option>
-            <option value="popular">По популярности</option>
-            <option value="new">По новизне</option>
-            <option value="posts">По количеству постов</option>
-        </select>
-    </div>
+            <select class="filter-select" asp-for="SortType">
+                <option value="">Сортировка по новизне</option>
+                <option value="posts">По количеству постов</option>
+            </select>
+        </div>
+    </form>
 
     <div class="characters-grid">
-        <div class="character-card">
-            <img src="s-l1200 (1).jpg" alt="Хацунэ Мику" class="character-image">
-            <div class="character-info">
-                <h3 class="character-name">Хацунэ Мику</h3>
-                <p class="character-anime">Vocaloid</p>
-                <p class="character-posts">24 поста с этим персонажем</p>
-                <a href="#" class="view-posts">Смотреть посты</a>
+        @foreach (var character in toShow)
+        {
+            <div class="character-card">
+                <a href="@Url.Action("Character", "Home", new {Id = character.CharacterId})">
+                    <img src="@character.ImageUrl" alt="Персонаж" class="character-image">
+                </a>
+                <div class="character-info">
+                    <h3 class="character-name">@character.Name</h3>
+                    <p class="character-posts">@character.Posts.Count поста с этим персонажем</p>
+                    <a href="@Url.Action("ArtPage", "Home", new ArtPageFindViewModel{Page = 1, CharacterId = character.CharacterId, FilterType = string.Empty})" class="view-posts">Смотреть посты</a>
+                </div>
             </div>
-        </div>
-
-        <div class="character-card">
-            <img src="aku.png" alt="Сакура Харуно" class="character-image">
-            <div class="character-info">
-                <h3 class="character-name">Сакура Харуно</h3>
-                <p class="character-anime">Наруто</p>
-                <p class="character-posts">18 постов с этим персонажем</p>
-                <a href="#" class="view-posts">Смотреть посты</a>
-            </div>
-        </div>
-
-        <div class="character-card">
-            <img src="leviacker.jpg" alt="Леви Аккерман" class="character-image">
-            <div class="character-info">
-                <h3 class="character-name">Леви Аккерман</h3>
-                <p class="character-anime">Атака Титанов</p>
-                <p class="character-posts">32 поста с этим персонажем</p>
-                <a href="#" class="view-posts">Смотреть посты</a>
-            </div>
-        </div>
-
-        <div class="character-card">
-            <img src="pike.png" alt="Спайк Шпигель" class="character-image">
-            <div class="character-info">
-                <h3 class="character-name">Спайк Шпигель</h3>
-                <p class="character-anime">Ковбой Бибоп</p>
-                <p class="character-posts">12 постов с этим персонажем</p>
-                <a href="#" class="view-posts">Смотреть посты</a>
-            </div>
-        </div>
-
-        <div class="character-card">
-            <img src="nezuko.jpg" alt="Камадо Незуко" class="character-image">
-            <div class="character-info">
-                <h3 class="character-name">Камадо Незуко</h3>
-                <p class="character-anime">Истребитель демонов</p>
-                <p class="character-posts">28 постов с этим персонажем</p>
-                <a href="#" class="view-posts">Смотреть посты</a>
-            </div>
-        </div>
-
-        <div class="character-card">
-            <img src="luffy.jpg" alt="Манки Д. Луффи" class="character-image">
-            <div class="character-info">
-                <h3 class="character-name">Манки Д. Луффи</h3>
-                <p class="character-anime">Ван Пис</p>
-                <p class="character-posts">22 поста с этим персонажем</p>
-                <a href="#" class="view-posts">Смотреть посты</a>
-            </div>
-        </div>
+        }
     </div>
 
-    <div class="pagination">
-        <a href="#" class="page-number active">1</a>
-        <a href="#" class="page-number">2</a>
-        <a href="#" class="page-number">3</a>
-        <a href="#" class="page-number">4</a>
-        <a href="#" class="page-number">5</a>
-    </div>
+    @if (toShow.Count != 0)
+    {
+        <div class="pagination">
+            @if (page != 1)
+            {
+                Model.Page--;
+                <a href="@Url.Action("CharactersPage", "Home", Model)" class="page-number">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            }
+            <p class="page-number active">@(page)</p>
+            @if (page != maxPage)
+            {
+                Model.Page++;
+                <a href="@Url.Action("CharactersPage", "Home", Model)" class="page-number">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <span>Нет ещё персонажей!</span>
+    }
 </div>

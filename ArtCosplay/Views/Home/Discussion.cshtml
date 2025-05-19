@@ -117,7 +117,9 @@
                 @foreach (var comment in comments)
                 {
                     <div class="comment-item">
-                        <img src="@comment.User.AvatarUrl" alt="Аватар" class="comment-avatar">
+                        <a href="@Url.Action("Profile", "Home", new {Id = comment.UserId})">
+                            <img src="@comment.User.AvatarUrl" alt="Аватар" class="comment-avatar">
+                        </a>
                         <div class="comment-content">
                             <div class="comment-header">
                                 <a href="@Url.Action("Profile", "Home", new {Id = comment.UserId})">
@@ -127,7 +129,7 @@
 
                                 @if (SignInManager.IsSignedIn(User))
                                 {
-                                    if (discussion.AuthorId == user.Id || await UserManager.IsInRoleAsync(user, "Admin") || await UserManager.IsInRoleAsync(user, "Moderator"))
+                                    if (comment.UserId == user.Id || await UserManager.IsInRoleAsync(user, "Admin") || await UserManager.IsInRoleAsync(user, "Moderator"))
                                     {
                                         <i class="fa-solid fa-trash discussion-action" name="delete-comment" style="margin-left: auto;" comment-id="@comment.CommentId"></i>
                                     }

@@ -2,7 +2,7 @@
 
 namespace ArtCosplay.Data.DB
 {
-    public class AnimeCharacter
+    public class Character
     {
         [Key]
         public int CharacterId { get; set; }
@@ -11,7 +11,7 @@ namespace ArtCosplay.Data.DB
         public string Name { get; set; }
 
         [Required, MaxLength(100)]
-        public string AnimeName { get; set; }
+        public string SourceName { get; set; }
 
         public string Description { get; set; }
 
@@ -20,6 +20,7 @@ namespace ArtCosplay.Data.DB
         
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public ICollection<PostCharacter> PostCharacters { get; set; }
+
+        public ICollection<Post> Posts { get; set; }
     }
 }

@@ -118,7 +118,7 @@
                                 </a>
                                 @if (SignInManager.IsSignedIn(User))
                                 {
-                                    if (post.AuthorId == user.Id || await UserManager.IsInRoleAsync(user, "Admin") || await UserManager.IsInRoleAsync(user, "Moderator"))
+                                    if (comment.UserId == user.Id || await UserManager.IsInRoleAsync(user, "Admin") || await UserManager.IsInRoleAsync(user, "Moderator"))
                                     {
                                         <i class="fa-solid fa-trash discussion-action" name="delete-comment" style="margin-left: auto;" comment-id="@comment.CommentId"></i>
                                     }

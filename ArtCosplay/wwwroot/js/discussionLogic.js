@@ -9,7 +9,11 @@ var user;
 fetch('/User/GetCurrentUser', {method : 'GET'})
     .then((response) => response.text())
     .then((text) => {
-        user = JSON.parse(text);
+        answer = JSON.parse(text);
+
+        if (answer.status === 'success') {
+            user = answer.user;
+        }
     })
     .catch(error =>
         console.error(error)

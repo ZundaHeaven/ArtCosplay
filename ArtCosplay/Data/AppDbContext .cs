@@ -32,8 +32,7 @@ namespace ArtCosplay.Data
         public DbSet<Chat> Chats => Set<Chat>();
         public DbSet<Message> Messages => Set<Message>();
         public DbSet<Discussion> Discussions => Set<Discussion>();  
-        public DbSet<AnimeCharacter> AnimeCharacters => Set<AnimeCharacter>();
-        public DbSet<PostCharacter> PostCharacters => Set<PostCharacter>();
+        public DbSet<Character> Characters => Set<Character>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -55,10 +54,6 @@ namespace ArtCosplay.Data
 
             modelBuilder.Entity<Like>()
                 .HasIndex(l => new { l.PostId, l.UserId })
-                .IsUnique();
-
-            modelBuilder.Entity<PostCharacter>()
-                .HasIndex(pc => new { pc.PostId, pc.CharacterId })
                 .IsUnique();
 
             modelBuilder.Entity<Post>()

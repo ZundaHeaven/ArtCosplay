@@ -43,15 +43,20 @@
             .ToList();
     }
 
+    if(Model.Item1.CharacterId != null)
+    {
+        posts = posts.Where(x => x.CharacterId == (Model.Item1.CharacterId == 0 ? null : Model.Item1.CharacterId)).ToList();
+    }
+
     int maxPage = Convert.ToInt32(Math.Ceiling(posts.ToList().Count / 5.0));
+
+    if (maxPage == 0)
+        maxPage = 1;
+
     if (page > maxPage)
-    {
         page = maxPage;
-    }
     else if (page <= 0)
-    {
         page = 1;
-    }
 
     var toShow = new List<Post>();
     var chunks = posts.Chunk(5);
@@ -74,7 +79,7 @@
 
             <div class="arts-filters">
                 <label class="filter-tab">
-                    <input type="radio" value="" asp-for="Item1.FilterType" style="display: none;" name="FilterType">
+                    <input type="radio" value="" asp-for="Item1.FilterType" style="display: none;" name="FilterType" checked>
                     <span>Все</span>
                 </label>
 
@@ -88,9 +93,18 @@
                 </label>
 
                 <select class="filter-select" asp-for="Item1.Sort" name="Sort">
-                    <option value="">Сначала новые</option>
+                    <option value="0">Сначала новые</option>
                     <option value="popular">Сначала популярные</option>
                     <option value="comments">Сначала обсуждаемые</option>
+                </select>
+
+                <select class="filter-select" asp-for="Item1.CharacterId" name="CharacterId">
+                    <option value="">Все персонажи</option>
+                    @foreach (var character in DbContext.Characters)
+                    {
+                        <option value="@character.CharacterId">@character.Name</option>
+                    }
+                    <option value="0">Другое</option>
                 </select>
             </div>
         </form>
@@ -131,14 +145,14 @@
             <div class="pagination">
                 @if (page != 1)
                 {
-                    <a href="@Url.Action("ArtPage", "Home", new {Page = Model.Item1 != null ?  Model.Item1.Page == null ? 1 : Model.Item1.Page - 1 : 1, Filter = Model.Item1.Filter, FilterType = Model.Item1.FilterType, Sort = Model.Item1.Sort})" class="page-number">
+                    <a href="@Url.Action("ArtPage", "Home", new {Page = Model.Item1 != null ?  Model.Item1.Page == null ? 1 : Model.Item1.Page - 1 : 1, Filter = Model.Item1.Filter, FilterType = Model.Item1.FilterType, Sort = Model.Item1.Sort, CharacterId = Model.Item1.CharacterId})" class="page-number">
                         <i class="fas fa-chevron-left"></i>
                     </a>
                 }
                 <p class="page-number active">@(page)</p>
                 @if (page != maxPage)
                 {
-                    <a href="@Url.Action("ArtPage", "Home", new {Page = Model.Item1 != null ?  Model.Item1.Page == null ? 2 : Model.Item1.Page + 1 : 2, Filter = Model.Item1.Filter, FilterType = Model.Item1.FilterType, Sort = Model.Item1.Sort})" class="page-number">
+                    <a href="@Url.Action("ArtPage", "Home", new {Page = Model.Item1 != null ?  Model.Item1.Page == null ? 2 : Model.Item1.Page + 1 : 2, Filter = Model.Item1.Filter, FilterType = Model.Item1.FilterType, Sort = Model.Item1.Sort, CharacterId = Model.Item1.CharacterId})" class="page-number">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 }
@@ -165,7 +179,7 @@
                         <i class="fas fa-cloud-upload-alt"></i>
                     </div>
                     <span>Перетащите сюда изображение или кликните для загрузки</span>
-                    <input asp-for="Item2.Image" name="Image" type="file" id="art-file" accept="image/*" style="opacity: 0;">
+                    <input asp-for="Item2.Image" name="Image" type="file" id="art-file" accept="image/*" style="display: none;">
                 </div>
 
                 <div class="form-group">
@@ -188,6 +202,17 @@
                         <span>Косплей</span>
                     </label>
                 </div>
+                <div class="post-character">
+                    <p>Персонаж</p>
+                    <select class="filter-select" asp-for="Item2.CharacterId" name="CharacterId">
+                        <option value="0">Другое</option>
+                        @foreach (var character in DbContext.Characters)
+                        {
+                            <option value="@character.CharacterId">@character.Name</option>
+                        }
+                    </select>
+                </div>
+
                 <button type="submit" class="submit-btn">Опубликовать</button>
             </form>
         </aside>

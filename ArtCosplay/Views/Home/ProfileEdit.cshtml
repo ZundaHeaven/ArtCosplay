@@ -5,6 +5,7 @@
 @model EditUserViewModel
 
 @{
+    ViewData["Title"] = "Настройка профиля";
     var user = await UserManager.GetUserAsync(User);
 }
 
@@ -31,7 +32,7 @@
             <div class="avatar-upload">
                 <img src="@user.AvatarUrl" class="avatar-preview" id="avatarPreview">
                 <div class="file-input">
-                    <input type="file" id="avatar" accept="image/*" asp-for="Avatar" type="file">
+                    <input type="file" id="avatar" accept="image/*" asp-for="Avatar" type="file" style="display: none;">
                     <label for="avatar">Выбрать файл</label>
                 </div>
             </div>

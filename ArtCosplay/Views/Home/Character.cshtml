@@ -1,0 +1,122 @@
+﻿@using ArtCosplay.Data
+@using ArtCosplay.Data.DB
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext DbContext
+@model CharacterViewModel
+
+@{
+    int? characterId = Convert.ToInt32(ViewData["Id"]);
+
+    var character = DbContext.Characters.FirstOrDefault(x => x.CharacterId == characterId);
+    var posts = DbContext.Posts
+        .Include(x => x.Author)
+        .Include(x => x.Likes)
+        .Include(x => x.Comments)
+        .Where(x => x.CharacterId == characterId)
+        .OrderByDescending(x => x.CreatedAt)
+        .ToList();
+
+    int page = Model.Page;
+    int maxPage = Convert.ToInt32(Math.Ceiling(posts.ToList().Count / 6.0));
+
+    if (maxPage == 0)
+        maxPage = 1;
+
+    if (page > maxPage)
+        page = maxPage;
+    else if (page <= 0)
+        page = 1;
+
+    var toShow = new List<Post>();
+    var chunks = posts.Chunk(6);
+
+    if (chunks.Count() != 0)
+    {
+        toShow = chunks.ElementAt(page - 1).ToList();
+    }
+}
+
+
+<div class="character-header">
+    <img src="@character.ImageUrl" alt="Персонаж" class="character-image-large">
+    <div class="character-info-large">
+        <h1 class="character-title">@character.Name</h1>
+        <p class="character-description">
+            @character.Description
+        </p>
+        <div class="character-stats">
+            <div class="stat-item">
+                <div class="stat-number">@posts.Count</div>
+                <div class="stat-label">поста</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">@posts.Sum(x => x.Likes.Count)</div>
+                <div class="stat-label">лайков</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">@posts.Sum(x => x.Comments.Count)</div>
+                <div class="stat-label">комментариев</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="posts-section">
+    <h2 class="section-title">Посты с @character.Name</h2>
+    <div class="posts-grid">
+        @foreach (var post in toShow)
+        {
+            <div class="post-card">
+                <a href="@Url.Action("Post", "Home", new { id = post.PostId})" style="text-decoration: none;">
+                    <img src="@post.ImageUrl" alt="Пост" class="post-image">
+                </a>
+                <div class="post-content">
+                    <a href="@Url.Action("Profile", "Home", new {Id = post.AuthorId})" style="text-decoration: none;">
+                        <div class="post-header">
+                            <img src="@post.Author.AvatarUrl" alt="Аватар" class="post-avatar">
+                            <span class="post-user">@post.Author.UserName</span>
+                            <span class="post-time">@post.CreatedAt.ToString()</span>
+                        </div>
+                    </a>
+                    <a href="@Url.Action("Post", "Home", new { id = post.PostId})" style="text-decoration: none;">
+                        <h3 class="post-title">@post.Title</h3>
+                        <p class="post-excerpt">@post.Content</p>
+                        <div class="post-actions">
+                            <div class="post-action">
+                                <i class="far fa-thumbs-up"></i>
+                                <span>@post.Likes.Count</span>
+                            </div>
+                            <div class="post-action">
+                                <i class="far fa-comment"></i>
+                                <span>@post.Comments.Count</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+    @if (toShow.Count != 0)
+    {
+        <div class="pagination">
+            @if (page != 1)
+            {
+                Model.Page--;
+                <a href="@Url.Action("Character", "Home",new {Id = characterId, Page = Model.Page})" class="page-number">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            }
+            <p class="page-number active">@(page)</p>
+            @if (page != maxPage)
+            {
+                Model.Page++;
+                <a href="@Url.Action("Character", "Home", new {Id = characterId, Page = Model.Page} )" class="page-number">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        }
+    </div>
+}
+else
+{
+    <span>Нет ещё персонажей!</span>
+}

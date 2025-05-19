@@ -1,8 +1,7 @@
 ﻿.discussions-container {
-    display: grid;
-    grid-template-columns: 1fr 300px;
+    display: flex;
     gap: 30px;
-    max-width: 1200px;
+    max-width: 1600px;
     margin: 30px auto;
     padding: 0 20px;
 }
@@ -14,6 +13,8 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(5px);
     border: 1px solid rgba(255, 255, 255, 0.3);
+    max-width: 1000px;
+    width: 100%;
 }
         
 .discussions-title {
@@ -130,6 +131,7 @@
     height: fit-content;
     position: sticky;
     top: 90px;
+    width: 400px;
 }
         
 .create-title {
@@ -239,4 +241,15 @@
 
 .discussions-search button:hover {
     transform: translateY(-2px);
+}
+
+@media screen and (max-width: 1200px) {
+    .discussions-container {
+        flex-direction: column-reverse;
+    }
+
+    .create-discussion {
+        width: 100%;
+        position: static;
+    }
 }

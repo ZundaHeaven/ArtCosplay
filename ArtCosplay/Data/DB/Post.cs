@@ -28,8 +28,11 @@ namespace ArtCosplay.Data.DB
         public string AuthorId { get; set; }
         public User Author { get; set; }
 
+        [ForeignKey("Character")]
+        public int? CharacterId { get; set; } = 0;
+        public Character? Character { get; set; }
+
         public ICollection<Like> Likes { get; set; }
         public ICollection<Comment> Comments { get; set; }
-        public ICollection<PostCharacter> PostCharacters { get; set; }
     }
 }

@@ -1,13 +1,10 @@
-using System.Collections;
+using System.Data.Entity;
 using System.Diagnostics;
-using System.Security.Cryptography;
-using System.Text;
 using ArtCosplay.Data;
 using ArtCosplay.Data.DB;
 using ArtCosplay.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Common;
 
 namespace ArtCosplay.Controllers
 {
@@ -23,9 +20,17 @@ namespace ArtCosplay.Controllers
 
         public IActionResult Index() => View();
         public IActionResult Privacy() => View();
-        public IActionResult ArtPage(ArtPageFindViewModel model) => View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(model ?? new ArtPageFindViewModel(), new CreatePostViewModel()));
+        public IActionResult ArtPage(ArtPageFindViewModel? model) => View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(model ?? new ArtPageFindViewModel(), new CreatePostViewModel()));
         public IActionResult ShopPage() => View();
-        public IActionResult CharactersPage() => View();
+        public IActionResult CharactersPage(CharacterPageViewModel? model) => View(model ?? new CharacterPageViewModel());
+        public IActionResult Character(int id, CharacterViewModel? model)
+        {
+            if (_appDbContext.Characters.FirstOrDefault(x => x.CharacterId == id) == null)
+                return NotFound();
+
+            ViewData["Id"] = id;
+            return View(model ?? new CharacterViewModel());
+        }
         public IActionResult Publication() => View();
         public IActionResult ShoppingItem() => View();
         public IActionResult About() => View();
@@ -191,6 +196,12 @@ namespace ArtCosplay.Controllers
                     return View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(new ArtPageFindViewModel(), model));
                 }
 
+                if(_appDbContext.Characters.FirstOrDefault(x=> x.CharacterId == model.CharacterId) == null && model.CharacterId != 0)
+                {
+                    ModelState.AddModelError(string.Empty, "Нет такого персонажа!");
+                    return View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(new ArtPageFindViewModel(), model));
+                }
+
                 if (model.Image.Length > 4096 * 1024) {
                     ModelState.AddModelError(string.Empty, "Размер файла не должен превышать 4 мб!");
                     return View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(new ArtPageFindViewModel(), model));
@@ -221,7 +232,8 @@ namespace ArtCosplay.Controllers
                     Content = model.Content,
                     ImageUrl = path,
                     Type = model.Type,
-                    AuthorId = user.Id
+                    AuthorId = user.Id,
+                    CharacterId = model.CharacterId == 0 ? null : model.CharacterId
                 }).Entity;
 
                 _appDbContext.SaveChanges();
