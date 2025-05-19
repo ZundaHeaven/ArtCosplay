@@ -2,9 +2,9 @@
 @using ArtCosplay.Data.DB
 @using Microsoft.EntityFrameworkCore
 @inject AppDbContext DbContext
-@model CharacterViewModel
 
 @{
+
     int? characterId = Convert.ToInt32(ViewData["Id"]);
 
     var character = DbContext.Characters.FirstOrDefault(x => x.CharacterId == characterId);
@@ -16,7 +16,9 @@
         .OrderByDescending(x => x.CreatedAt)
         .ToList();
 
-    int page = Model.Page;
+    ViewData["Title"] = character.Name;
+
+    int page = Convert.ToInt32(ViewData["Page"]);
     int maxPage = Convert.ToInt32(Math.Ceiling(posts.ToList().Count / 6.0));
 
     if (maxPage == 0)
@@ -101,16 +103,14 @@
         <div class="pagination">
             @if (page != 1)
             {
-                Model.Page--;
-                <a href="@Url.Action("Character", "Home",new {Id = characterId, Page = Model.Page})" class="page-number">
+                <a href="@Url.Action("Character", "Home",new {Id = characterId, Page = page - 1})" class="page-number">
                     <i class="fas fa-chevron-left"></i>
                 </a>
             }
             <p class="page-number active">@(page)</p>
             @if (page != maxPage)
             {
-                Model.Page++;
-                <a href="@Url.Action("Character", "Home", new {Id = characterId, Page = Model.Page} )" class="page-number">
+                <a href="@Url.Action("Character", "Home", new {Id = characterId, Page = page + 1} )" class="page-number">
                 <i class="fas fa-chevron-right"></i>
             </a>
         }
@@ -118,5 +118,5 @@
 }
 else
 {
-    <span>Нет ещё персонажей!</span>
+    <span>Нет ещё постов с этим персонажем!</span>
 }

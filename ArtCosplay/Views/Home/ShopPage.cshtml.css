@@ -26,13 +26,13 @@
     padding-bottom: 10px;
 }
 
-.marketplace-search {
+::deep .marketplace-search {
     display: flex;
     gap: 15px;
     margin-bottom: 20px;
 }
 
-.marketplace-search input {
+::deep .marketplace-search input {
     flex: 1;
     padding: 10px 15px;
     border: 1px solid #ddd;
@@ -41,7 +41,7 @@
     outline: none;
 }
 
-.marketplace-search button {
+::deep .marketplace-search button {
     background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
     color: white;
     border: none;
@@ -51,18 +51,18 @@
     transition: transform 0.3s;
 }
 
-.marketplace-search button:hover {
+::deep .marketplace-search button:hover {
     transform: translateY(-2px);
 }
 
-.marketplace-filters {
+::deep .marketplace-filters {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
     flex-wrap: wrap;
 }
 
-.filter-select {
+::deep .filter-select {
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 20px;

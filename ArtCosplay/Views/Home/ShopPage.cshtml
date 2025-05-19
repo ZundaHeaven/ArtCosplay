@@ -1,189 +1,65 @@
-﻿@{
+﻿@using ArtCosplay.Data
+@using ArtCosplay.Data.DB
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@model Tuple<ShopPageFindViewModel, CreateShoppingItemViewModel>
+
+@inject UserManager<User> UserManager
+@inject AppDbContext DbContext
+@inject SignInManager<User> SignInManager
+
+@{
+    IQueryable<Product> items = DbContext.Products
+        .Include(x => x.Seller);
+
+    if (Model.Item1.FilterText != null)
+        items = items.Where(x => x.Title.ToLower().Contains(Model.Item1.FilterText.ToLower())
+            || x.Description.ToLower().Contains(Model.Item1.FilterText.ToLower()));
+
+
+    if (Model.Item1.FilterType != null)
+        items = items.Where(x => x.Type == Model.Item1.FilterType);
+
+    if (Model.Item1.FilterCity != null)
+        items = items.Where(x => x.City == Model.Item1.FilterCity);
+
+    if (Model.Item1.FilterCost != null)
+        items = items.Where(x => x.Price <= Model.Item1.FilterCost);
+
+    items = items.OrderByDescending(x => x.CreatedAt);
     ViewData["Title"] = "Барахолка";
+
+    int page = Model.Item1.Page ?? 1;
+    int maxPage = Convert.ToInt32(Math.Ceiling(items.ToList().Count / 6.0));
+
+    if (maxPage == 0)
+        maxPage = 1;
+
+    if (page > maxPage)
+        page = maxPage;
+    else if (page <= 0)
+        page = 1;
+    
+    Model.Item1.Page = page;
+    var toShow = new List<Product>();
+    var chunks = items.ToList().Chunk(6);
+
+    if (chunks.Count() != 0)
+    {
+        toShow = chunks.ElementAt(page - 1).ToList();
+    }
 }
 
 <div class="marketplace-container">
     <div class="items-list">
         <h1 class="items-title">Барахолка</h1>
-
-        <div class="marketplace-search">
-            <input type="text" placeholder="Поиск по товарам...">
-            <button><i class="fas fa-search"></i> Найти</button>
-        </div>
-
-        <div class="marketplace-filters">
-            <select class="filter-select">
-                <option value="">Все категории</option>
-                <option value="wigs">Парики</option>
-                <option value="costumes">Костюмы</option>
-                <option value="props">Реквизит</option>
-                <option value="shoes">Обувь</option>
-                <option value="art-supplies">Материалы для рисования</option>
-            </select>
-
-            <select class="filter-select">
-                <option value="">Любой город</option>
-                <option value="moscow">Москва</option>
-                <option value="spb">Санкт-Петербург</option>
-                <option value="kazan">Казань</option>
-                <option value="ekb">Екатеринбург</option>
-            </select>
-
-            <select class="filter-select">
-                <option value="">Любая цена</option>
-                <option value="0-1000">до 1 000 ₽</option>
-                <option value="1000-3000">1 000 - 3 000 ₽</option>
-                <option value="3000-5000">3 000 - 5 000 ₽</option>
-                <option value="5000+">от 5 000 ₽</option>
-            </select>
-        </div>
-
-        <div class="items-grid">
-            <div class="item-card">
-                <span class="item-price">2 500 ₽</span>
-                <img src="arik.jpg" alt="Парик для косплея" class="item-image">
-                <h3 class="item-title">Парик для Хацунэ Мику</h3>
-                <p class="item-description">Качественный синтетический парик голубого цвета. Длина 60 см. Использовался 2 раза.</p>
-                <div class="item-seller">
-                    <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Продавец" class="seller-avatar">
-                    <div>
-                        <div class="seller-name">CosplayShop</div>
-                        <div class="item-location">Москва</div>
-                    </div>
-                </div>
-                <div class="item-actions">
-                    <button class="item-btn">В корзину</button>
-                    <button class="item-btn">Сообщение</button>
-                </div>
+        <form asp-action="ShopPage" asp-controller="Home" method="get">
+            <div class="marketplace-search">
+                <input type="text" placeholder="Поиск по товарам..." asp-for="Item1.FilterText" name="FilterText"> 
+                <button type="submit"><i class="fas fa-search"></i> Найти</button>
             </div>
-
-            <div class="item-card">
-                <span class="item-price">3 800 ₽</span>
-                <img src="s-l1200.jpg" alt="Косплей костюм" class="item-image">
-                <h3 class="item-title">Костюм Сакуры (Наруто)</h3>
-                <p class="item-description">Полный комплект: кимоно, пояс, набедренная повязка. Размер S-M. Отличное состояние.</p>
-                <div class="item-seller">
-                    <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Продавец" class="seller-avatar">
-                    <div>
-                        <div class="seller-name">AnimeLover</div>
-                        <div class="item-location">Санкт-Петербург</div>
-                    </div>
-                </div>
-                <div class="item-actions">
-                    <button class="item-btn">В корзину</button>
-                    <button class="item-btn">Сообщение</button>
-                </div>
-            </div>
-
-            <div class="item-card">
-                <span class="item-price">1 200 ₽</span>
-                <img src="1419431596.png" alt="Кисти для рисования" class="item-image">
-                <h3 class="item-title">Набор кистей для рисования</h3>
-                <p class="item-description">12 профессиональных кистей разного размера. Идеально для акварели и акрила.</p>
-                <div class="item-seller">
-                    <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Продавец" class="seller-avatar">
-                    <div>
-                        <div class="seller-name">ArtSupplies</div>
-                        <div class="item-location">Казань</div>
-                    </div>
-                </div>
-                <div class="item-actions">
-                    <button class="item-btn">В корзину</button>
-                    <button class="item-btn">Сообщение</button>
-                </div>
-            </div>
-
-            <div class="item-card">
-                <span class="item-price">5 500 ₽</span>
-                <img src="guts.png" alt="Меч для косплея" class="item-image">
-                <h3 class="item-title">Меч Гатса (Берсерк)</h3>
-                <p class="item-description">Ручная работа из EVA foam и пластика. Длина 150 см. Очень легкий и прочный.</p>
-                <div class="item-seller">
-                    <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Продавец" class="seller-avatar">
-                    <div>
-                        <div class="seller-name">BerserkFan</div>
-                        <div class="item-location">Екатеринбург</div>
-                    </div>
-                </div>
-                <div class="item-actions">
-                    <button class="item-btn">В корзину</button>
-                    <button class="item-btn">Сообщение</button>
-                </div>
-            </div>
-
-            <div class="item-card">
-                <span class="item-price">4 200 ₽</span>
-                <img src="61WMdy6SIIL._AC_UY1000_.jpg" alt="Косплей обувь" class="item-image">
-                <h3 class="item-title">Сапоги для косплея</h3>
-                <p class="item-description">Черные кожаные сапоги на каблуке 5 см. Размер 38. Подойдут для многих персонажей.</p>
-                <div class="item-seller">
-                    <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Продавец" class="seller-avatar">
-                    <div>
-                        <div class="seller-name">CosplayGear</div>
-                        <div class="item-location">Новосибирск</div>
-                    </div>
-                </div>
-                <div class="item-actions">
-                    <button class="item-btn">В корзину</button>
-                    <button class="item-btn">Сообщение</button>
-                </div>
-            </div>
-
-            <div class="item-card">
-                <span class="item-price">2 800 ₽</span>
-                <img src="9add670f-783f-4a53-984d-f92cc4eb26d3.jpg" alt="Маркеры для рисования" class="item-image">
-                <h3 class="item-title">Набор маркеров Copic</h3>
-                <p class="item-description">6 маркеров Copic Ciao (почти новые). Включает 3 основных цвета и 3 оттенка кожи.</p>
-                <div class="item-seller">
-                    <img src="gray-user-profile-icon-png-fP8Q1P.png" alt="Продавец" class="seller-avatar">
-                    <div>
-                        <div class="seller-name">DigitalArtist</div>
-                        <div class="item-location">Москва</div>
-                    </div>
-                </div>
-                <div class="item-actions">
-                    <button class="item-btn">В корзину</button>
-                    <button class="item-btn">Сообщение</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="pagination">
-            <a href="#" class="page-number active">1</a>
-            <a href="#" class="page-number">2</a>
-            <a href="#" class="page-number">3</a>
-            <a href="#" class="page-number">4</a>
-            <a href="#" class="page-number">5</a>
-        </div>
-    </div>
-
-    <aside class="sell-item">
-        <h2 class="sell-title">Продать свой товар</h2>
-        <form>
-            <div class="form-group">
-                <label for="item-name">Название товара</label>
-                <input type="text" id="item-name" placeholder="Например: Парик для косплея">
-            </div>
-
-            <div class="form-group">
-                <label for="item-price">Цена (₽)</label>
-                <input type="number" id="item-price" placeholder="Укажите цену">
-            </div>
-
-            <div class="form-group">
-                <label>Фотографии товара</label>
-                <div class="file-upload">
-                    <div class="file-upload-icon">
-                        <i class="fas fa-camera"></i>
-                    </div>
-                    <span class="file-upload-text">Добавьте до 5 фото товара</span>
-                    <input type="file" id="item-photos" style="display: none;" multiple>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="item-category">Категория</label>
-                <select id="item-category">
+            <div class="marketplace-filters">
+                <select class="filter-select" asp-for="Item1.FilterType" name="FilterType">
                     <option value="">Выберите категорию</option>
                     <option value="wigs">Парики</option>
                     <option value="costumes">Костюмы</option>
@@ -192,19 +68,140 @@
                     <option value="art-supplies">Материалы для рисования</option>
                     <option value="other">Другое</option>
                 </select>
-            </div>
 
-            <div class="form-group">
-                <label for="item-description">Описание</label>
-                <textarea id="item-description" placeholder="Подробно опишите товар, укажите состояние, размеры и т.д."></textarea>
-            </div>
+                <select class="filter-select" asp-for="Item1.FilterCity" name="FilterCity">
+                    <option value="">Любой город</option>
+                    <option value="Орша">Орша</option>
+                    <option value="Минск">Минск</option>
+                    <option value="Брест">Брест</option>
+                    <option value="Могилев">Могилев</option>
+                    <option value="Гомель">Гомель</option>
+                    <option value="Гродно">Гродно</option>
+                    <option value="Витебск">Витебск</option>
+                </select>
 
-            <div class="form-group">
-                <label for="item-location">Город</label>
-                <input type="text" id="item-location" placeholder="Где находится товар">
+                <select class="filter-select" asp-for="Item1.FilterCost" name="FilterCost">
+                    <option value="">Любая цена</option>
+                    <option value="50">до 50 р.</option>
+                    <option value="100">до 100 р.</option>
+                    <option value="150">до 150 р.</option>
+                    <option value="200">до 200 р.</option>
+                </select>
             </div>
-
-            <button type="submit" class="submit-btn">Разместить объявление</button>
         </form>
-    </aside>
+
+
+        <div class="items-grid">
+            @foreach (var item in toShow)
+            {
+                <div class="item-card">
+                    <a href="@Url.Action("ShoppingItem", "Home", new {Id = item.ProductId})" style="text-decoration: none;">
+                        <span class="item-price">@item.Price р.</span>
+                        <img src="@item.ImageUrl" alt="Фото" class="item-image">
+                        <h3 class="item-title">@item.Title</h3>
+                        <p class="item-description">@item.Description</p>
+                    </a>
+                    <a href="@Url.Action("Profile", "Home", new {Id = item.Seller.Id})" style="text-decoration: none;">
+                        <div class="item-seller">
+                            <img src="@item.Seller.AvatarUrl" alt="Продавец" class="seller-avatar">
+                            <div>
+                                <div class="seller-name">@item.Seller.UserName</div>
+                                <div class="item-location">@item.City</div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <div class="item-actions">
+                        <button class="item-btn">Сообщение</button>
+                    </div>
+                </div>
+            }
+        </div>
+        @if (toShow.Count != 0)
+        {
+            <div class="pagination">
+                @if (page != 1)
+                {
+                    <a href="@Url.Action("ShopPage", "Home", new {Page = Model.Item1.Page == null ? 1 : Model.Item1.Page - 1, FilterText = Model.Item1.FilterText, FilterType = Model.Item1.FilterType, FilterCity = Model.Item1.FilterCity, FilterCost = Model.Item1.FilterCost})" class="page-number">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                }
+                <p class="page-number active">@(page)</p>
+                @if (page != maxPage)
+                {
+                    <a href="@Url.Action("ShopPage", "Home", new {Page =  Model.Item1.Page == null ? 1 : Model.Item1.Page + 1, FilterText = Model.Item1.FilterText, FilterType = Model.Item1.FilterType, FilterCity = Model.Item1.FilterCity, FilterCost = Model.Item1.FilterCost})" class="page-number">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                }
+            </div>
+        }
+        else
+        {
+            <span>Нет ещё товаров!</span>
+        }
+    </div>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <aside class="sell-item">
+            <h2 class="sell-title">Продать свой товар</h2>
+            <form asp-action="ShopPage" asp-controller="Home" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly"></div>
+                <div class="form-group">
+                    <label for="item-name">Название товара</label>
+                    <input type="text" id="item-name" placeholder="Например: Парик для косплея" asp-for="Item2.Title" name="Title">
+                </div>
+
+                <div class="form-group">
+                    <label for="item-price">Цена (р.)</label>
+                    <input id="item-price" type="number" placeholder="Укажите цену" asp-for="Item2.Price" name="Price">
+                </div>
+
+                <div class="form-group">
+                    <label>Фотографии товара</label>
+                    <div class="file-upload">
+                        <div class="file-upload-icon">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <span class="file-upload-text">Добавьте фото товара</span>
+                        <input type="file" id="art-file" style="display: none;" asp-for="Item2.Image" name="Image" accept="image/*">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="item-category">Категория</label>
+                    <select id="item-category" asp-for="Item2.Type" name="Type">
+                        <option value="">Выберите категорию</option>
+                        <option value="wigs">Парики</option>
+                        <option value="costumes">Костюмы</option>
+                        <option value="props">Реквизит</option>
+                        <option value="shoes">Обувь</option>
+                        <option value="art-supplies">Материалы для рисования</option>
+                        <option value="other">Другое</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="item-description">Описание</label>
+                    <textarea id="item-description" placeholder="Подробно опишите товар, укажите состояние, размеры и т.д." asp-for="Item2.Content" name="Content"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="item-category">Город</label>
+                    <select class="item-category" asp-for="Item2.City" name="City">
+                        <option value="Орша">Орша</option>
+                        <option value="Минск">Минск</option>
+                        <option value="Брест">Брест</option>
+                        <option value="Могилев">Могилев</option>
+                        <option value="Гомель">Гомель</option>
+                        <option value="Гродно">Гродно</option>
+                        <option value="Витебск">Витебск</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="submit-btn">Разместить объявление</button>
+            </form>
+        </aside>
+    }
 </div>
+
+<script src="/js/artSendLogic.js"></script>
