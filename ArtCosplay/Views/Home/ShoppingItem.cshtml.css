@@ -18,7 +18,48 @@
     max-width: 1200px;
     align-self: center;
 }
-        
+
+.product-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+
+.discussion-action {
+    font-size: 18px;
+}
+
+.product-header i {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: color 0.3s;
+    font-size: 16px;
+    color: #777;
+}
+
+.product-title-box {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.not-active {
+    padding: 10px;
+    background: #444;
+    color: white;
+    font-weight: bold;
+    border-radius: 10px;
+    opacity: 0.5;
+}
+
+.product-header i:hover {
+    color: #6a11cb;
+}
+
 .back-button {
     display: inline-flex;
     align-items: center;
@@ -42,6 +83,7 @@
     color: #6a11cb;
     margin-bottom: 15px;
     font-family: 'Comic Sans MS', cursive;
+    display: inline-block;
 }
         
 .product-price {

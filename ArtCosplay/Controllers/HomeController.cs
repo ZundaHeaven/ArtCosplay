@@ -26,17 +26,6 @@ namespace ArtCosplay.Controllers
             if (user == null)
                 return RedirectToAction("Registration", "User");
 
-            if (id == null)
-                return NotFound();
-
-            var chat = _appDbContext.Chats.FirstOrDefault(x => x.ChatId == id);
-
-            if(chat == null)
-                return NotFound();
-
-            if (chat.SellerId != user.Id && chat.BuyerId != user.Id)
-                return NotFound();
-
             ViewData["Id"] = id;
 
             return View();

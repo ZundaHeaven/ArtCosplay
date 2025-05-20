@@ -8,10 +8,10 @@ namespace ArtCosplay.Data.DB
         [Key]
         public int DiscussionId { get; set; }
 
-        [Required, MaxLength(100)]
+        [Required, MaxLength(300)]
         public string Title { get; set; }
 
-        [Required, MaxLength(2000)]
+        [Required, MaxLength(20000)]
         public string Content { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

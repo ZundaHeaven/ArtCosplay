@@ -2,6 +2,17 @@ function isEmptyOrSpaces(str){
     return str === null || str.match(/^ *$/) !== null;
 }
 
+const formatDate = (date) => {
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    const hh = String(date.getHours()).padStart(2, '0');
+    const min = String(date.getMinutes()).padStart(2, '0');
+    const ss = String(date.getSeconds()).padStart(2, '0');
+
+    return `${dd}.${mm}.${yyyy} ${hh}:${min}:${ss}`;
+};
+
 var pageType = 'Discussion';
 var returnUrl = '/Home/DiscusPage';
 
@@ -100,11 +111,13 @@ function addComment()
         else {
             console.log(pageType);
 
+            var date = new Date();
+
             var data = {
                 avatar: user.avatarUrl,
                 username: user.userName,
                 userId: user.id,
-                time: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                time: formatDate(new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds())),
                 text: contentBox.value,
                 commentId: json['commentId'],
                 likes: 0

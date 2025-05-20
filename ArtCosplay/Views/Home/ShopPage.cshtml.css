@@ -187,6 +187,27 @@
     top: 90px;
     width: 40%;
 }
+
+.header-shop {
+    display: flex;
+    justify-content: space-between;
+}
+
+.header-shop a {
+    text-decoration: none;
+    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    align-self: center;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    transition: all 200ms;
+}
+
+.header-shop a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
         
 .sell-title {
     font-size: 20px;

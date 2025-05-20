@@ -10,7 +10,8 @@
 
 @{
     IQueryable<Product> items = DbContext.Products
-        .Include(x => x.Seller);
+        .Include(x => x.Seller)
+        .Where(x => x.IsAvailable);
 
     if (Model.Item1.FilterText != null)
         items = items.Where(x => x.Title.ToLower().Contains(Model.Item1.FilterText.ToLower())
@@ -52,7 +53,11 @@
 
 <div class="marketplace-container">
     <div class="items-list">
-        <h1 class="items-title">Барахолка</h1>
+        <div class="header-shop">
+            <h1 class="items-title">Барахолка</h1>
+            <a href="@Url.Action("Chat", "Home")">Чаты барахолки</a>
+        </div>
+
         <form asp-action="ShopPage" asp-controller="Home" method="get">
             <div class="marketplace-search">
                 <input type="text" placeholder="Поиск по товарам..." asp-for="Item1.FilterText" name="FilterText"> 
