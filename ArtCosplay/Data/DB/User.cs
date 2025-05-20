@@ -26,6 +26,7 @@ namespace ArtCosplay.Data.DB
         public bool IsCosplayer { get; set; }
         public bool IsSeller { get; set; }
 
+        public ICollection<Message> Messages { get; set; }
         public ICollection<Event> Events { get; set; }
         public ICollection<News> News { get; set; }
         public ICollection<Product> Products { get; set; }

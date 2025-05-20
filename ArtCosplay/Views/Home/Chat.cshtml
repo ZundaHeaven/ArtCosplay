@@ -1,0 +1,80 @@
+﻿@using ArtCosplay.Data
+@using ArtCosplay.Data.DB
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+@inject AppDbContext DbContext
+
+@{
+    int chatId = Convert.ToInt32(ViewData["Id"]);
+
+    var user = await UserManager.GetUserAsync(User);
+    var chats = DbContext.Chats
+        .Include(x => x.Product)
+        .Include(x => x.Seller)
+        .Include(x => x.Buyer)
+        .Include(x => x.Messages)
+        .Where(x => x.SellerId == user.Id || x.BuyerId == user.Id)
+        .ToList();
+
+    var currentChat = chats.FirstOrDefault(x => x.ChatId == chatId);
+}
+
+<div class="chat-container">
+    <div class="chats-list">
+        @foreach(var chat in chats)
+        {
+            var chatUser = chat.Product.SellerId == user.Id ? chat.Buyer : chat.Seller;
+
+            <a href="@Url.Action("Chat", "Home", new {Id = chat.ChatId})" style="text-decoration: none;">
+                <div class="chat-item active">
+                    <img src="@chatUser.AvatarUrl" alt="Продавец" class="chat-avatar">
+                    <div class="chat-info">
+                        <div class="chat-name">@chatUser.UserName</div>
+                        @* <div class="chat-status">Онлайн <span class="online-dot"></span></div> *@
+                    </div>
+                    @* <div class="unread-count">2</div> *@
+                </div>
+            </a>
+
+        }
+    </div>
+
+    <div class="chat-window">
+        <div class="chat-header">
+            <div class="chat-partner">
+                <img src="@currentChat.Seller.AvatarUrl" alt="Продавец" class="chat-avatar">
+                <div>
+                    <div class="chat-name">@currentChat.Seller.UserName</div>
+                    <div class="chat-status">Продает: @currentChat.Product.Title</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="messages-container" id="messages-container">
+            @foreach (var message in currentChat.Messages)
+            {
+                <div class="message @(message.SenderId == user.Id ? "outgoing" : "incoming")">
+                    <div class="message-bubble">
+                        @message.Content
+                        <div class="message-time">@message.SentAt.ToString()</div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="message-input">
+            <textarea placeholder="Напишите сообщение..." id="message-area"></textarea>
+            <button class="send-button" id="send-button">Отправить</button>
+        </div>
+    </div>
+</div>
+<script src="~/lib/signalr/signalr.js"></script>
+<script src="~/js/chat.js"></script>
+<script>
+     chatId = @chatId;
+     userId = '@user.Id';
+     productId = @currentChat.Product.ProductId;
+</script>

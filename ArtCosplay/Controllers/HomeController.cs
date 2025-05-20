@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ArtCosplay.Controllers
 {
-    public class HomeController(ILogger<HomeController> logger, 
-        AppDbContext appDbContext, 
-        UserManager<User> userManager, 
+    public class HomeController(ILogger<HomeController> logger,
+        AppDbContext appDbContext,
+        UserManager<User> userManager,
         IWebHostEnvironment appEnvironment) : Controller
     {
         private readonly ILogger<HomeController> _logger = logger;
@@ -20,6 +20,27 @@ namespace ArtCosplay.Controllers
 
         public IActionResult Index() => View();
         public IActionResult Privacy() => View();
+        public async Task<IActionResult> Chat(int? id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToAction("Registration", "User");
+
+            if (id == null)
+                return NotFound();
+
+            var chat = _appDbContext.Chats.FirstOrDefault(x => x.ChatId == id);
+
+            if(chat == null)
+                return NotFound();
+
+            if (chat.SellerId != user.Id && chat.BuyerId != user.Id)
+                return NotFound();
+
+            ViewData["Id"] = id;
+
+            return View();
+        }
         public IActionResult ArtPage(ArtPageFindViewModel? model) => View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(model ?? new ArtPageFindViewModel(), new CreatePostViewModel()));
         public IActionResult ShopPage(ShopPageFindViewModel? model) => View(new Tuple<ShopPageFindViewModel, CreateShoppingItemViewModel>(model ?? new ShopPageFindViewModel(), new CreateShoppingItemViewModel()));
         public IActionResult CharactersPage(CharacterPageViewModel? model) => View(model ?? new CharacterPageViewModel());

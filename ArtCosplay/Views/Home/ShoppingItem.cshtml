@@ -53,11 +53,12 @@
             <aside class="chat-section">
                 <h2 class="chat-title">Чат с продавцом</h2>
 
-                <div class="seller-info">
-                    <img src="@item.Seller.AvatarUrl" alt="Продавец" class="seller-avatar">
-                    <div>
-                        <div class="seller-name">@item.Seller.UserName</div>
-                        @*                     <div class="seller-rating">
+                <a href="@Url.Action("Profile", "Home", new {Id = item.Seller.Id})" style="text-decoration: none; color: none;">
+                    <div class="seller-info">
+                        <img src="@item.Seller.AvatarUrl" alt="Продавец" class="seller-avatar">
+                        <div>
+                            <div class="seller-name">@item.Seller.UserName</div>
+                            @*                     <div class="seller-rating">
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
@@ -66,21 +67,22 @@
                         <span style="color: #777; margin-left: 5px;">4.7 (23 отзыва)</span>
                     </div> 
                     <div class="seller-location">Москва · На сайте 2 года</div>*@
+                        </div>
                     </div>
-                </div>
+                </a>
 
-                <div class="chat-messages">
+                <div class="chat-messages" id="messages-container">
                     @foreach (var message in messages)
                     {
-                        <div class="message @(message.SenderId == item.SellerId ? "seller-message" : "user-message")">
+                        <div class="message @(message.SenderId == item.SellerId ? "incoming" : "outgoing")">
                             @message.Content
                             <div class="message-time">@message.SentAt</div>
                         </div>
                     }
                 </div>
                 <div class="chat-input">
-                    <input type="text" class="chat-input-field" placeholder="Напишите сообщение...">
-                    <button class="send-btn">
+                    <input id="message-area" type="text" class="chat-input-field" placeholder="Напишите сообщение...">
+                    <button id="send-button" class="send-btn">
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </div>
@@ -88,3 +90,19 @@
         }
     }
 </div>
+<script src="~/lib/signalr/signalr.js"></script>
+<script src="~/js/chat.js"></script>
+<script>
+    userId = '@user.Id';
+    productId = @productId;
+    addMessage = function (data) {
+        var commentHTML =
+            `<div class="message ${data.type}">
+                    ${data.content}
+                <div class="message-time">${data.sentAt}</div>
+            </div>`
+
+        const container = document.getElementById('messages-container');
+        container.insertAdjacentHTML('beforeend', commentHTML);
+    }
+</script>

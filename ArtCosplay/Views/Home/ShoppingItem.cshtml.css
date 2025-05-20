@@ -14,8 +14,8 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(5px);
     border: 1px solid rgba(255, 255, 255, 0.3);
-    width: 80%;
-    max-width: 800px;
+    width: 100%;
+    max-width: 1200px;
     align-self: center;
 }
         
@@ -224,30 +224,32 @@
     border-radius: 8px;
     border: 1px solid #eee;
 }
-        
-.message {
+
+::deep .message {
     margin-bottom: 15px;
     padding: 10px 15px;
     border-radius: 18px;
     max-width: 80%;
     font-size: 14px;
     line-height: 1.4;
+    max-width: 300px;
+    word-wrap: break-word;
 }
-        
-.seller-message {
+
+::deep .incoming {
     background-color: rgba(106, 17, 203, 0.1);
     border-bottom-left-radius: 4px;
     margin-right: auto;
 }
         
-.user-message {
+::deep .outgoing {
     background-color: rgba(37, 117, 252, 0.1);
     border-bottom-right-radius: 4px;
     margin-left: auto;
     text-align: right;
 }
-        
-.message-time {
+
+::deep .message-time {
     font-size: 11px;
     color: #777;
     margin-top: 5px;
