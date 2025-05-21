@@ -24,50 +24,32 @@
         .Select(x => new MainPagePost { Discussion = x, CreatedAt = x.CreatedAt }));
 
     posts = posts.OrderByDescending(x => x.CreatedAt).ToList();
+    var events = DbContext.Events.OrderByDescending(x => x.CreatedAt).ToList();
+    var news = DbContext.News.OrderByDescending(x => x.CreatedAt).ToList();
+
+    if(news.Count() != 0)
+        news = news.Chunk(5).ElementAt(0).ToList();
+
+    if (events.Count() != 0)
+        events = events.Chunk(5).ElementAt(0).ToList();
 
     if(posts.Count > 5)
-    {
         posts = posts.Chunk(5).ElementAt(0).ToList();
-    }
+    
 }
 
 <div class="main-container">
     <aside class="events-sidebar">
         <h2 class="sidebar-title">Ближайшие мероприятия</h2>
-        <div class="event-item">
-            <div class="event-title">AnimeCon 2025</div>
-            <div class="event-date">15-17 сентября, Москва</div>
-        </div>
-        <div class="event-item">
-            <div class="event-title">Cosplay Fest</div>
-            <div class="event-date">5-6 октября, Санкт-Петербург</div>
-        </div>
-        <div class="event-item">
-            <div class="event-title">Japan Weekend</div>
-            <div class="event-date">21-22 октября, Казань</div>
-        </div>
-        <div class="event-item">
-            <div class="event-title">AnimeLand</div>
-            <div class="event-date">11-12 ноября, Екатеринбург</div>
-        </div>
-        <div class="event-item">
-            <div class="event-title">Winter Cosplay Party</div>
-            <div class="event-date">16 декабря, Москва</div>
-        </div>
-        <div class="event-item">
-            <div class="event-title">New Year Anime Night</div>
-            <div class="event-date">30 декабря, Санкт-Петербург</div>
-        </div>
-        <div class="event-item">
-            <div class="event-title">Anime Spring Festival</div>
-            <div class="event-date">20-22 марта, Нижний Новгород</div>
-        </div>
-        <div class="event-item">
-            <div class="event-title">Cosplay Championship</div>
-            <div class="event-date">10-12 апреля, Ростов-на-Дону</div>
-        </div>
+        @foreach (var eventItem in events)
+        {
+            <div class="event-item">
+                <div class="event-title">@eventItem.Title</div>
+                <div class="event-date">@eventItem.Description</div>
+            </div>
+        }
     </aside>
-        
+
     <main class="main-content">
         @if(posts.Count != 0)
         {
@@ -102,7 +84,7 @@
                         </div>
                     </a>
                 </article>
-                
+
             }
         }
         else
@@ -110,45 +92,23 @@
             <span>Ещё нет обсуждений или артов/косплеев!</span>
         }
 
-@*         <div class="pagination">
+        @*         <div class="pagination">
             <a href="#" class="page-number active">1</a>
             <a href="#" class="page-number">2</a>
             <a href="#" class="page-number">3</a>
             <a href="#" class="page-number">4</a>
         </div> *@
     </main>
-        
+
     <aside class="news-sidebar">
         <h2 class="sidebar-title">Новости косплея и аниме</h2>
-        <div class="news-item">
-            <div class="news-title">Анонсирован новый аниме-сериал от Studio Ghibli</div>
-            <div class="news-text">Легендарная студия представила трейлер своего нового проекта, выход которого запланирован на весну 2025 года.</div>
-            <div class="news-date">2 часа назад</div>
-        </div>
-        <div class="news-item">
-            <div class="news-title">Конкурс косплея на Comic-Con Russia 2025</div>
-            <div class="news-text">Регистрация на главный косплей-конкурс года открыта! Призы от спонсоров превышают 500 000 рублей.</div>
-            <div class="news-date">1 день назад</div>
-        </div>
-        <div class="news-item">
-            <div class="news-title">Новые материалы для косплея от японского бренда</div>
-            <div class="news-text">Компания CosplayFabric выпустила линейку новых тканей с улучшенными характеристиками для создания костюмов.</div>
-            <div class="news-date">2 дня назад</div>
-        </div>
-        <div class="news-item">
-            <div class="news-title">Итоги чемпионата мира по косплею 2025</div>
-            <div class="news-text">Российский косплеер занял второе место в престижном международном конкурсе в Японии.</div>
-            <div class="news-date">3 дня назад</div>
-        </div>
-        <div class="news-item">
-            <div class="news-title">Новый рекорд посещаемости аниме-фестиваля</div>
-            <div class="news-text">Фестиваль Anime Festival 2025 посетило более 50 000 человек за 3 дня.</div>
-            <div class="news-date">5 дней назад</div>
-        </div>
-        <div class="news-item">
-            <div class="news-title">Открытие нового аниме-магазина в Москве</div>
-            <div class="news-text">Крупнейший в России магазин аниме-мерча открыл свои двери для поклонников японской культуры.</div>
-            <div class="news-date">1 неделя назад</div>
-        </div>
+        @foreach (var newsItem in news)
+        {
+            <div class="news-item">
+                <div class="news-title">@newsItem.Title</div>
+                <div class="news-text">@newsItem.Content</div>
+                <div class="news-date">@newsItem.CreatedAt.ToString()</div>
+            </div>
+        }
     </aside>
 </div>

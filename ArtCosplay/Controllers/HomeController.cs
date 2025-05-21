@@ -26,20 +26,21 @@ namespace ArtCosplay.Controllers
             if (user == null)
                 return RedirectToAction("Registration", "User");
 
-            if (id == null)
-                return NotFound();
-
-            var chat = _appDbContext.Chats.FirstOrDefault(x => x.ChatId == id);
-
-            if(chat == null)
-                return NotFound();
-
-            if (chat.SellerId != user.Id && chat.BuyerId != user.Id)
-                return NotFound();
-
             ViewData["Id"] = id;
 
             return View();
+        }
+        public async Task<IActionResult> AdminPanel()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if(user == null)
+                return RedirectToAction("Registration", "User");
+
+            if (await _userManager.IsInRoleAsync(user, "Admin"))
+                return View();
+
+            return RedirectToAction("Registration", "User");
         }
         public IActionResult ArtPage(ArtPageFindViewModel? model) => View(new Tuple<ArtPageFindViewModel, CreatePostViewModel>(model ?? new ArtPageFindViewModel(), new CreatePostViewModel()));
         public IActionResult ShopPage(ShopPageFindViewModel? model) => View(new Tuple<ShopPageFindViewModel, CreateShoppingItemViewModel>(model ?? new ShopPageFindViewModel(), new CreateShoppingItemViewModel()));
@@ -146,8 +147,6 @@ namespace ArtCosplay.Controllers
                     }
 
                     string path = $"/data/Avatars/{HashedPathGenerator.GeneratePath(model.Avatar)}";
-
-                    Console.WriteLine($"LOOOOOOOOOOOL PATH {path}");
 
                     using (var fileStream = new FileStream($"{_appEnvironment.WebRootPath}{path}", FileMode.Create))
                     {

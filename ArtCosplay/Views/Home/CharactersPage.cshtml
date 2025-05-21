@@ -16,9 +16,16 @@
     if(Model.PostTypeFilter != null)
         characters = characters.Where(x => x.SourceName == Model.PostTypeFilter);
 
-    if(Model.SortType != null)
+    if (Model.SortType != null)
+    {
         if (Model.SortType == "posts")
             characters = characters.OrderByDescending(x => x.Posts.Count);
+    }
+    else
+    {
+        characters = characters.OrderByDescending(x => x.CharacterId);
+
+    }
 
     int page = Model.Page;
     int maxPage = Convert.ToInt32(Math.Ceiling(characters.ToList().Count / 6.0));
@@ -89,16 +96,14 @@
         <div class="pagination">
             @if (page != 1)
             {
-                Model.Page--;
-                <a href="@Url.Action("CharactersPage", "Home", Model)" class="page-number">
+                <a href="@Url.Action("CharactersPage", "Home", new CharacterPageViewModel{Page = Model.Page - 1, PostTypeFilter = Model.PostTypeFilter, SortType = Model.SortType, TextFilter = Model.TextFilter})" class="page-number">
                     <i class="fas fa-chevron-left"></i>
                 </a>
             }
             <p class="page-number active">@(page)</p>
             @if (page != maxPage)
             {
-                Model.Page++;
-                <a href="@Url.Action("CharactersPage", "Home", Model)" class="page-number">
+                <a href="@Url.Action("CharactersPage", "Home", new CharacterPageViewModel{Page = Model.Page + 1, PostTypeFilter = Model.PostTypeFilter, SortType = Model.SortType, TextFilter = Model.TextFilter})" class="page-number">
                     <i class="fas fa-chevron-right"></i>
                 </a>
             }

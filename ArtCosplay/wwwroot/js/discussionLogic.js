@@ -2,6 +2,17 @@ function isEmptyOrSpaces(str){
     return str === null || str.match(/^ *$/) !== null;
 }
 
+const formatDate = (date) => {
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    const hh = String(date.getHours()).padStart(2, '0');
+    const min = String(date.getMinutes()).padStart(2, '0');
+    const ss = String(date.getSeconds()).padStart(2, '0');
+
+    return `${dd}.${mm}.${yyyy} ${hh}:${min}:${ss}`;
+};
+
 var pageType = 'Discussion';
 var returnUrl = '/Home/DiscusPage';
 
@@ -39,7 +50,7 @@ function createComment(data) {
             <i class="far fa-thumbs-up"></i>
             <span>${data.likes}</span>
           </div>
-          <div class="comment-action">
+          <div class="comment-action" name="comment-reply" author-name="${data.username}">
             <i class="fas fa-reply"></i>
             <span>Ответить</span>
           </div>
@@ -58,6 +69,9 @@ function createComment(data) {
 
     const deleteBtn = newComment.querySelector('[name="delete-comment"]');
     deleteBtn.addEventListener('click', deleteComment);
+
+    const replyButton = newComment.querySelector('[name="comment-reply"]');
+    replyButton.addEventListener('click', replyComment);
 }
 
 function addComment()
@@ -100,11 +114,13 @@ function addComment()
         else {
             console.log(pageType);
 
+            var date = new Date();
+
             var data = {
                 avatar: user.avatarUrl,
                 username: user.userName,
                 userId: user.id,
-                time: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                time: formatDate(new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds())),
                 text: contentBox.value,
                 commentId: json['commentId'],
                 likes: 0
@@ -279,6 +295,12 @@ function deletePost()
     });
 }
 
+function replyComment(e) {
+    contentBox = document.getElementById('comment-textarea');
+    var name = e.currentTarget.getAttribute('author-name');
+    contentBox.value = '@' + name + ',' + contentBox.value;
+}
+
 var button = document.getElementById('comment-send');
 button.onclick = addComment;
 const commentsLike = Array.from(document.getElementsByName('like-comment'));
@@ -290,6 +312,10 @@ postLike.addEventListener("click", likeDiscussion);
 var commentsDelete = Array.from(document.getElementsByName('delete-comment'));
 commentsDelete.forEach(element => {
     element.addEventListener("click", deleteComment);
+});
+var commentsReply = Array.from(document.getElementsByName('comment-reply'));
+commentsReply.forEach(element => {
+    element.addEventListener("click", replyComment);
 });
 var postDelete = document.getElementById('delete-post');
 if(postDelete) postDelete.onclick = deletePost;

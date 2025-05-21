@@ -5,7 +5,7 @@ namespace ArtCosplay.Models
     public class CreateDiscusViewModel
     {
         [Required]
-        [MaxLength(100)]
+        [MaxLength(300)]
         [Display(Name = "Заголовок")]
         public string Title { get; set; }
 

@@ -2,9 +2,9 @@
 
 namespace ArtCosplay.Models
 {
-    public class IdModel
+    public class IdModel<T>
     {
         [Required]
-        public int Id { get; set; }
+        public T Id { get; set; }
     }
 }

@@ -16,8 +16,8 @@ namespace ArtCosplay.Data.DB
         [MaxLength(100)]
         public string Location { get; set; }
 
-        public DateTime StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public DateTime StartDate { get; set; } = DateTime.UtcNow;
+        public DateTime? EndDate { get; set; } = DateTime.UtcNow;
 
         [MaxLength(255)]
         public string CoverImageUrl { get; set; }

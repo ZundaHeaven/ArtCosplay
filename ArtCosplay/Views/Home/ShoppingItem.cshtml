@@ -2,6 +2,8 @@
 @using ArtCosplay.Data.DB
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
+
+@inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
 @inject AppDbContext DbContext
 
@@ -11,13 +13,15 @@
         .Include(x => x.Seller)
         .First(x => x.ProductId == productId);
 
+    ViewData["Title"] = item.Title;
+
     var user = await UserManager.GetUserAsync(User);
 
     IEnumerable<Message> messages = new List<Message>();
     if (user != null)
     {
         var chat = DbContext.Chats
-            .FirstOrDefault(x => x.SellerId == item.SellerId && x.BuyerId == user!.Id);
+            .FirstOrDefault(x => x.SellerId == item.SellerId && x.BuyerId == user!.Id && x.ProductId == productId);
 
         if (chat != null)
             messages = DbContext.Messages.Where(x => x.ChatId == chat.ChatId);
@@ -26,8 +30,26 @@
 
 <div class="product-container">
     <div class="product-section">
-        <h1 class="product-title">@item.Title</h1>
+        <div class="product-header">
+            <div class="product-title-box">
+                <h1 class="product-title">@item.Title</h1>
+                @if(!item.IsAvailable)
+                {
+                    <span class="not-active">Не активен</span>
+                }
+            </div>
+
+            @if (SignInManager.IsSignedIn(User))
+            {
+                if (item.SellerId == user.Id || await UserManager.IsInRoleAsync(user, "Admin") || await UserManager.IsInRoleAsync(user, "Moderator"))
+                {
+                    <i class="fa-solid fa-@(item.IsAvailable ? "trash" : "hammer") discussion-action" id="delete-item" style="margin-left: auto;" item-id="@item.ProductId"></i>
+                }
+
+            }
+        </div>
         <div class="product-price">@item.Price р.</div>
+
 
         <div class="product-gallery">
             <img src="@item.ImageUrl" alt="Предмет" class="product-main-image">
@@ -90,6 +112,7 @@
         }
     }
 </div>
+<script src="~/js/shoppingItem.js"></script>
 <script src="~/lib/signalr/signalr.js"></script>
 <script src="~/js/chat.js"></script>
 <script>

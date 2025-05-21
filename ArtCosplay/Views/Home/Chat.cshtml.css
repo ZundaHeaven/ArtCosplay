@@ -7,6 +7,16 @@
     flex-grow: 1;
 }
 
+.not-active {
+    padding: 2px;
+    background: #444;
+    color: white;
+    border-radius: 10px;
+    opacity: 0.5;
+    font-size: 12px;
+    display: block;
+}
+
 .chats-list {
     background: rgba(255, 255, 255, 0.85);
     border-radius: 10px;
@@ -15,7 +25,11 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     height: 70vh;
     overflow-y: auto;
-    width: 500px;
+    width: 700px;
+}
+
+.chat-info {
+    display: inline-block;
 }
 
 .chat-item {
@@ -27,6 +41,7 @@
     cursor: pointer;
     transition: all 0.3s;
     background: rgba(255,255,255,0.7);
+    justify-content: space-between;
 }
 
 .chat-item:hover {
@@ -62,7 +77,6 @@
 ::deep .message {
     display: flex;
     margin-bottom: 15px;
-    max-width: 300px;
     word-wrap: break-word;
 }
 
@@ -80,18 +94,22 @@
     border-radius: 20px;
     margin: 0 10px;
     position: relative;
+    width: 100%;
     max-width: 300px;
     word-wrap: break-word;
 }
 
 ::deep .message.incoming .message-bubble {
-    background: #fff;
-    border: 1px solid #ddd;
+    background-color: rgba(106, 17, 203, 0.1);
+    border-bottom-left-radius: 4px;
+    margin-right: auto;
 }
 
 ::deep .message.outgoing .message-bubble {
-    background: #6a11cb;
-    color: white;
+    background-color: rgba(37, 117, 252, 0.1);
+    border-bottom-right-radius: 4px;
+    margin-left: auto;
+    text-align: right;
 }
 
 ::deep .message-time {
@@ -116,7 +134,7 @@
     height: 50px;
 }
 
-.send-button {
+::deep #send-button {
     background: #6a11cb;
     color: white;
     border: none;
@@ -130,8 +148,42 @@
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    margin-right: 15px;
+    margin-right: 15px;    margin-bottom: 10px;
     border: 2px solid #6a11cb;
+}
+
+.chat-name {
+    color: #444;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.chat-partner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.partner-product img {
+    height: 50px;
+    width: 50px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.partner-product {
+    display: flex;
+    gap: 10px;
+}
+
+.chat-status {
+    display: inline-block;
+    font-weight: bold;
+    font-size: 20px;
+    font-family: 'Comic Sans MS';
+    color: black;
+    text-align: center;
 }
 
 .unread-count {

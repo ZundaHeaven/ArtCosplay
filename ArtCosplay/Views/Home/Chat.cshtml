@@ -8,6 +8,8 @@
 @inject AppDbContext DbContext
 
 @{
+    ViewData["Title"] = "Чаты";
+
     int chatId = Convert.ToInt32(ViewData["Id"]);
 
     var user = await UserManager.GetUserAsync(User);
@@ -19,6 +21,9 @@
         .Where(x => x.SellerId == user.Id || x.BuyerId == user.Id)
         .ToList();
 
+    if (chats == null)
+        chats = new List<Chat>();
+
     var currentChat = chats.FirstOrDefault(x => x.ChatId == chatId);
 }
 
@@ -27,54 +32,90 @@
         @foreach(var chat in chats)
         {
             var chatUser = chat.Product.SellerId == user.Id ? chat.Buyer : chat.Seller;
-
-            <a href="@Url.Action("Chat", "Home", new {Id = chat.ChatId})" style="text-decoration: none;">
-                <div class="chat-item active">
+            
+            <div class="chat-item active">
+                <a href="@Url.Action("Chat", "Home", new {Id = chat.ChatId})" style="text-decoration: none;">
                     <img src="@chatUser.AvatarUrl" alt="Продавец" class="chat-avatar">
                     <div class="chat-info">
                         <div class="chat-name">@chatUser.UserName</div>
                         @* <div class="chat-status">Онлайн <span class="online-dot"></span></div> *@
                     </div>
                     @* <div class="unread-count">2</div> *@
-                </div>
-            </a>
+                </a>
+                <a href="@Url.Action("ShoppingItem", "Home", new {Id = chat.ProductId})" style="text-decoration: none !important;">
+                    <div class="partner-product">
 
+                        <div class="chat-status">
+                            <span>@chat.Product.Title</span>
+                            @if (!chat.Product.IsAvailable)
+                            {
+                                <span class="not-active" style="">Не активен</span>
+                            }
+                        </div>
+                        <img src="@chat.Product.ImageUrl" alt="Предмет" style="text-decoration: none"/>
+                    </div>
+                </a>
+            </div>
         }
     </div>
 
     <div class="chat-window">
-        <div class="chat-header">
-            <div class="chat-partner">
-                <img src="@currentChat.Seller.AvatarUrl" alt="Продавец" class="chat-avatar">
-                <div>
-                    <div class="chat-name">@currentChat.Seller.UserName</div>
-                    <div class="chat-status">Продает: @currentChat.Product.Title</div>
+        @if(currentChat != null)
+        {
+            var userInfo = currentChat.Seller.Id == user.Id ?  currentChat.Buyer : currentChat.Seller;
+
+            <div class="chat-header">
+                <div class="chat-partner">
+                    <a href="@Url.Action("Profile", "Home", new {Id = userInfo.Id})" style="text-decoration: none !important;">
+                        <div class="partner-header">
+                            <img src="@userInfo.AvatarUrl" alt="Продавец" class="chat-avatar">
+                            <div class="chat-name">@userInfo.UserName</div>
+                        </div>
+                    </a>
+                    <a href="@Url.Action("ShoppingItem", "Home", new {Id = currentChat.ProductId})" style="text-decoration: none !important;">
+                        <div class="partner-product">
+                            <div class="chat-status">@currentChat.Product.Title</div>
+                            <img src="@currentChat.Product.ImageUrl" alt="Предмет" />
+                        </div>
+                    </a>
                 </div>
             </div>
-        </div>
+        }
 
         <div class="messages-container" id="messages-container">
-            @foreach (var message in currentChat.Messages)
+            @if(currentChat != null)
             {
-                <div class="message @(message.SenderId == user.Id ? "outgoing" : "incoming")">
-                    <div class="message-bubble">
-                        @message.Content
-                        <div class="message-time">@message.SentAt.ToString()</div>
+                @foreach (var message in currentChat.Messages)
+                {
+                    <div class="message @(message.SenderId == user.Id ? "outgoing" : "incoming")">
+                        <div class="message-bubble">
+                            @message.Content
+                            <div class="message-time">@message.SentAt.ToString()</div>
+                        </div>
                     </div>
-                </div>
+                }
             }
+            else
+            {
+                <span>Выберите чат, чтобы начать общение!</span>
+            }
+
         </div>
 
         <div class="message-input">
-            <textarea placeholder="Напишите сообщение..." id="message-area"></textarea>
-            <button class="send-button" id="send-button">Отправить</button>
+            <textarea placeholder="Напишите сообщение..." id="message-area"@(currentChat == null ? " disabled" : string.Empty)"></textarea>
+            <button class="send-button" id="send-button"@(currentChat == null ? " disabled" : string.Empty)>Отправить</button>
         </div>
     </div>
 </div>
-<script src="~/lib/signalr/signalr.js"></script>
-<script src="~/js/chat.js"></script>
-<script>
-     chatId = @chatId;
-     userId = '@user.Id';
-     productId = @currentChat.Product.ProductId;
-</script>
+
+@if (currentChat != null)
+{
+    <script src="/lib/signalr/signalr.js"></script>
+    <script src="/js/chat.js"></script>
+    <script>
+        chatId = @chatId;
+        userId = '@user.Id';
+        productId = @currentChat.Product.ProductId;
+    </script>
+}

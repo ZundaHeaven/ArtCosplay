@@ -15,7 +15,7 @@ namespace ArtCosplay.Controllers
         private readonly SignInManager<User> _signInManager = signInManager;
 
         [HttpDelete]
-        public async Task<IActionResult> Delete([FromBody] IdModel model)
+        public async Task<IActionResult> Delete([FromBody] IdModel<int> model)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace ArtCosplay.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Like([FromBody] IdModel model)
+        public async Task<IActionResult> Like([FromBody] IdModel<int> model)
         {
             try
             {
