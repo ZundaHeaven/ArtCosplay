@@ -13,24 +13,24 @@
     padding: 20px;
 }
 
-.sidebar button {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    background: #9c27b0;
-    border: none;
-    color: white;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: 0.3s;
-    font-weight: bold;
-}
+    .sidebar button {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        background: #9c27b0;
+        border: none;
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: 0.3s;
+        font-weight: bold;
+    }
 
-.sidebar button:hover {
-    background: #8e24aa;
-    transform: translateX(5px);
-}
+        .sidebar button:hover {
+            background: #8e24aa;
+            transform: translateX(5px);
+        }
 
 .content {
     margin-left: 240px;
@@ -51,6 +51,9 @@ table {
     box-shadow: 0 0 20px rgba(0,0,0,0.1);
     border-radius: 10px;
     overflow: hidden;
+    display: inline-block;
+    overflow: auto;
+    max-height: 500px;
 }
 
 th, td {
@@ -80,15 +83,23 @@ tr:hover {
     transition: 0.2s;
 }
 
-.edit-btn { background: #2196f3; }
-.delete-btn { background: #f44336; }
-.ban-btn { background: #ff9800; }
+.edit-btn {
+    background: #2196f3;
+}
+
+.delete-btn {
+    background: #f44336;
+}
+
+.ban-btn {
+    background: #ff9800;
+}
 
 .stats-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
     gap: 25px;
     margin-top: 20px;
+    flex-direction: column;
 }
 
 .stat-box {
@@ -97,7 +108,7 @@ tr:hover {
     padding: 25px;
     border-radius: 10px;
     text-align: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 input[type="checkbox"] {
@@ -136,25 +147,23 @@ input[type="checkbox"] {
     margin-bottom: 10px;
 }
 
-.add-btn:hover {
-    background: #8e24aa;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(156,39,176,0.6);
-}
+    .add-btn:hover {
+        background: #8e24aa;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(156,39,176,0.6);
+    }
 
-.add-btn::before {
-    content: '+ ';
-    font-size: 1.2em;
-}
+    .add-btn::before {
+        content: '+ ';
+        font-size: 1.2em;
+    }
 
 .form-group input, .form-group textarea, .form-group select, .form-group button {
     margin-bottom: 10px;
     width: 100%;
 }
 
-.add-form 
-{
-
+.add-form {
 }
 
 h2 {
@@ -173,7 +182,6 @@ h2 {
 .buttons-container {
     display: flex;
     flex-direction: column;
-    
 }
 
 @media screen and (max-width: 1200px) {
@@ -183,7 +191,7 @@ h2 {
         width: 100%;
     }
 
-    .content{
+    .content {
         margin: 0;
     }
 }
