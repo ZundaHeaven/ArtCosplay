@@ -3,6 +3,9 @@
 ###############################################################################
 * text=auto
 lib/* linguist-vendored
+signalr/* linguist-vendored
+signalr.js linguist-vendored
+signalr.min.js linguist-vendored
 ###############################################################################
 # Set default behavior for command prompt diff.
 #
