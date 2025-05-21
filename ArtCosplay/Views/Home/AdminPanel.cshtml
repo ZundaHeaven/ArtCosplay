@@ -1,0 +1,231 @@
+﻿@using ArtCosplay.Data
+@using ArtCosplay.Data.DB
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+@inject AppDbContext DbContext
+
+@{
+    ViewData["Title"] = "Админка";
+
+    var users = DbContext.Users.ToList();
+    var news = DbContext.News;
+    var events = DbContext.Events;
+    var characters = DbContext.Characters;
+    var posts = DbContext.Posts
+        .Include(x => x.Likes)
+        .Include(x => x.Comments)
+        .ToList();
+    var discussions = DbContext.Discussions
+        .Include(x => x.Likes)
+        .Include(x => x.Comments)
+        .ToList();
+    var products = DbContext.Products.ToList();
+}
+
+<div class="sidebar">
+    <div class="buttons-container">
+        <button onclick="showTab('users')">👥 Пользователи</button>
+        <button onclick="showTab('news')">📰 Новости</button>
+        <button onclick="showTab('events')">🎉 Мероприятия</button>
+        <button onclick="showTab('characters')">🎭 Образы</button>
+        <button onclick="showTab('stats')">📊 Статистика</button>
+    </div>
+</div>
+
+<div class="content">
+    <div id="users" class="tab-content">
+        <div class="table-header">
+            <h2>👥 Пользователи</h2>
+        </div>
+        <table>
+            <tr>
+                <th>Аватар</th>
+                <th>Логин</th>
+                <th>Почта</th>
+                <th>Админ</th>
+                <th>Бан</th>
+                <th>Действия</th>
+            </tr>
+            @foreach(var user in users)
+            {
+                <tr>
+                    <td><img src="@user.AvatarUrl" class="avatar-img"></td>
+                    <td>@user.UserName</td>
+                    <td>@user.Email</td>
+                    <td><input type="checkbox"@(await UserManager.IsInRoleAsync(user, "Admin") ? " checked" : string.Empty)  disabled></td>
+                    <td><input type="checkbox" disabled></td>
+                    <td>
+                        <button class="action-btn delete-btn" entity-id="@user.Id" name="delete-btn" var-type="string" request-url="/User/Delete">🗑️ Удалить</button>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+
+    <div id="news" class="tab-content" style="display:none;">
+        <form class="add-form" id="newsForm" method="post" enctype="multipart/form-data" asp-action="Add" asp-controller="News">
+            <h2>Добавить новость</h2>
+            <div class="form-group">
+                <input type="text" placeholder="Заголовок" name="First" maxlength="100">
+            </div>
+            <div class="form-group">
+                <textarea placeholder="Описание" rows="5" name="Second" maxlength="100"></textarea>
+            </div>
+            <button class="add-btn">Опубликовать</button>
+        </form>
+
+
+        <div class="table-header">
+            <h2>📰 Новости</h2>
+        </div>
+
+        <table>
+            <tr>
+                <th>Название</th>
+                <th>Описание</th>
+                <th>Действия</th>
+            </tr>
+            @foreach(var newsItem in news)
+            {
+                <tr>
+                    <td>@newsItem.Title</td>
+                    <td>@newsItem.Content</td>
+                    <td>
+                        <button class="action-btn delete-btn" name="delete-btn" entity-id="@newsItem.NewsId" var-type="int" request-url="/News/Delete">🗑️</button>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+
+    <div id="events" class="tab-content" style="display:none;">
+        <form class="add-form" id="characterForm" method="post" enctype="multipart/form-data" asp-action="Add" asp-controller="Events">
+            <h2>Создать мероприятие</h2>
+            <div class="form-group">
+                <input type="text" placeholder="Название мероприятия" id="eventTitle" name="First" maxlength="100">
+            </div>
+            <div class="form-group">
+                <input type="text" placeholder="Описание и место проведения" id="eventLocation" name="Second" maxlength="100">
+            </div>
+            <button class="add-btn">
+                Создать
+            </button>
+        </form>
+
+        <div class="table-header">
+            <h2>🎉 Мероприятия</h2>
+        </div>
+        <table>
+            <tr>
+                <th>Название</th>
+                <th>Описание</th>
+                <th>Действия</th>
+            </tr>
+            @foreach(var eventItem in events)
+            {
+                <tr>
+                    <td>@eventItem.Title</td>
+                    <td>@eventItem.Description</td>
+                    <td>
+                        <button class="action-btn delete-btn" name="delete-btn" entity-id="@eventItem.EventId" var-type="int" request-url="/Events/Delete">🗑️</button>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+
+    <div id="characters" class="tab-content" style="display:none;">
+        <h2>Добавить персонажа</h2>
+        <form class="add-form" id="characterForm" method="post" enctype="multipart/form-data" asp-action="Add" asp-controller="Character">
+            <div class="form-group">
+                <input type="text" placeholder="Имя персонажа" id="charName" name="Name" maxlength="100">
+            </div>
+            <div class="form-group">
+                <select class="filter-select" id="selectType" name="Type">
+                    <option value="anime">Аниме и Манга</option>
+                    <option value="gaming">Японские видеоигры</option>
+                    <option value="vocaloid">Вокалоиды и VTuber</option>
+                    <option value="traditional">Традиционная культура</option>
+                    <option value="subculture">Субкультурная мода</option>
+                    <option value="idol">Идол-группы и J-Pop</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <textarea id="charDescription" rows="4"
+                          placeholder="Описание персонажа..." name="Description" maxlength="2000"></textarea>
+            </div>
+            <div class="form-group">
+                <input type="file" accept="image/*" id="characterImage" name="Image">
+            </div>
+            <button class="add-btn" onclick="addCharacter()">
+                Добавить
+            </button>
+        </form>
+
+        <div class="table-header">
+            <h2>🎭 образы</h2>
+        </div>
+        <table>
+            <tr>
+                <th>Персонаж</th>
+                <th>Описание</th>
+                <th>Действия</th>
+            </tr>
+            @foreach(var character in characters)
+            {
+                <tr>
+                    <td>@character.Name</td>
+                    <td>@character.Description.Substring(0, Math.Min(character.Description.Length, 100))...</td>
+                    <td>
+                        <button class="action-btn delete-btn" name="delete-btn" entity-id="@character.CharacterId" var-type="int" request-url="/Character/Delete">🗑️</button>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+
+    <div id="stats" class="tab-content" style="display:none;">
+        <div class="table-header">
+            <h2>📊 Статистика</h2>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-box">
+                <h3>👥 Пользователи</h3>
+                <p>@users.Count()</p>
+            </div>
+            <div class="stat-box">
+                <h3>🤑 На барахолке</h3>
+                <p>@products.Count</p>
+            </div>
+            <div class="stat-box">
+                <h3>📝 Посты</h3>
+                <p>@posts.Count</p>
+            </div>
+            <div class="stat-box">
+                <h3>🗨 Обсуждения</h3>
+                <p>@discussions.Count</p>
+            </div>
+            <div class="stat-box">
+                <h3>❤️ Лайки</h3>
+                <p>@(posts.Sum(x => x.Likes.Count) + discussions.Sum(x => x.Likes.Count))</p>
+            </div>
+            <div class="stat-box">
+                <h3>💬 Комментарии</h3>
+                <p>@(posts.Sum(x => x.Comments.Count) + discussions.Sum(x => x.Comments.Count))</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/admin.js"></script>
+<script>
+    function showTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.style.display = 'none';
+        });
+        document.getElementById(tabName).style.display = 'block';
+    }
+</script>

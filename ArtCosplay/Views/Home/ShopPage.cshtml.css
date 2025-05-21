@@ -69,6 +69,7 @@
     background-color: rgba(255, 255, 255, 0.8);
     outline: none;
     font-size: 14px;
+    width: 31%;
 }
         
 .items-grid {
@@ -295,6 +296,10 @@
     justify-content: center;
     margin-top: 30px;
     gap: 10px;
+}
+
+.check-boxes {
+    display: block;
 }
 
 .page-number {

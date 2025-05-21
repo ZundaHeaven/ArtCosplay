@@ -219,4 +219,8 @@
     .events-sidebar, .news-sidebar {
         position: static;
     }
+
+    .post-text {
+        min-width: auto;
+    }
 }

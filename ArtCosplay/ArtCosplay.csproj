@@ -25,7 +25,6 @@
     <Folder Include="wwwroot\data\Avatars\" />
     <Folder Include="wwwroot\data\Posts\" />
     <Folder Include="wwwroot\data\Avatars\" />
-    <Folder Include="wwwroot\data\Characters\" />
     <Folder Include="wwwroot\data\Products\" />
     <Folder Include="wwwroot\lib\signalr\" />
   </ItemGroup>

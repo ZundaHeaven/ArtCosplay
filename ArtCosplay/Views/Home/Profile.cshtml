@@ -65,7 +65,11 @@
             <img src="@profileUser.AvatarUrl" alt="Аватар пользователя" class="profile-avatar">
             <h2 class="profile-name">@profileUser.UserName</h2>
         </div>
-
+        @if (await UserManager.IsInRoleAsync(profileUser, "Admin"))
+        {
+            <div class="admin-text">Админ</div>
+        }
+        
         <div class="profile-stats">
             <div class="stat-item">
                 <div class="stat-number"><i class="fa-solid fa-heart"></i> @posts.Sum(x => x.Post == null ? x.Discussion.Likes.Count : x.Post.Likes.Count)</div>

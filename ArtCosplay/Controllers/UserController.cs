@@ -223,6 +223,53 @@ namespace ArtCosplay.Controllers
                 });
             }
         }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete([FromBody]IdModel<string> model)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+
+                if (user == null) return BadRequest(new
+                {
+                    Status = "error",
+                    Message = "User is null"
+                });
+
+                if (!await _userManager.IsInRoleAsync(user, "Admin")) return BadRequest(new
+                {
+                    Status = "error",
+                    Message = "No premissions to delete user"
+                });
+
+                var userToDelete = _appDbContext.Users.FirstOrDefault(x => x.Id == model.Id);
+
+                if(userToDelete == null) return BadRequest(new
+                {
+                    Status = "error",
+                    Message = "User not found"
+                });
+
+                _appDbContext.Users.Remove(userToDelete);
+                _appDbContext.SaveChanges();
+
+                return Ok(new
+                {
+                    Status = "success",
+                    Message = "Пользователь был удален"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error while fetching users {ex}");
+                return StatusCode(500, new
+                {
+                    Status = "error",
+                    Message = "Server error"
+                });
+            }
+        }
     }
 }
 

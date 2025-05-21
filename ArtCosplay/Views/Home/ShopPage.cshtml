@@ -9,14 +9,15 @@
 @inject SignInManager<User> SignInManager
 
 @{
+    var user = await UserManager.GetUserAsync(User);
+
     IQueryable<Product> items = DbContext.Products
         .Include(x => x.Seller)
-        .Where(x => x.IsAvailable);
+        .Where(x => Model.Item1.FilterNotActive == !x.IsAvailable);
 
     if (Model.Item1.FilterText != null)
         items = items.Where(x => x.Title.ToLower().Contains(Model.Item1.FilterText.ToLower())
             || x.Description.ToLower().Contains(Model.Item1.FilterText.ToLower()));
-
 
     if (Model.Item1.FilterType != null)
         items = items.Where(x => x.Type == Model.Item1.FilterType);
@@ -26,6 +27,9 @@
 
     if (Model.Item1.FilterCost != null)
         items = items.Where(x => x.Price <= Model.Item1.FilterCost);
+
+    if(Model.Item1.FilterOnlyMy == true && user != null)
+        items = items.Where(x => x.SellerId == user.Id);
 
     items = items.OrderByDescending(x => x.CreatedAt);
     ViewData["Title"] = "Барахолка";
@@ -40,7 +44,7 @@
         page = maxPage;
     else if (page <= 0)
         page = 1;
-    
+
     Model.Item1.Page = page;
     var toShow = new List<Product>();
     var chunks = items.ToList().Chunk(6);
@@ -92,6 +96,21 @@
                     <option value="150">до 150 р.</option>
                     <option value="200">до 200 р.</option>
                 </select>
+
+                <div class="check-boxes">
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <input type="checkbox" asp-for="Item1.FilterOnlyMy" name="FilterOnlyMy">
+                        <label asp-for="Item1.FilterOnlyMy">Мои объявления</label>
+                    }
+                    else
+                    {
+                        <input type="hidden" name="FilterOnlyMy" value="false">
+                    }
+                   
+                    <input type="checkbox" asp-for="Item1.FilterNotActive" name="FilterNotActive">
+                    <label asp-for="Item1.FilterNotActive">Неактивные</label>
+                </div>
             </div>
         </form>
 
@@ -127,14 +146,14 @@
             <div class="pagination">
                 @if (page != 1)
                 {
-                    <a href="@Url.Action("ShopPage", "Home", new {Page = Model.Item1.Page == null ? 1 : Model.Item1.Page - 1, FilterText = Model.Item1.FilterText, FilterType = Model.Item1.FilterType, FilterCity = Model.Item1.FilterCity, FilterCost = Model.Item1.FilterCost})" class="page-number">
+                    <a href="@Url.Action("ShopPage", "Home", new {Page = Model.Item1.Page == null ? 1 : Model.Item1.Page - 1, FilterText = Model.Item1.FilterText, FilterType = Model.Item1.FilterType, FilterCity = Model.Item1.FilterCity, FilterCost = Model.Item1.FilterCost, FilterOnlyMy = Model.Item1.FilterOnlyMy, FilterNotActive = Model.Item1.FilterNotActive})" class="page-number">
                         <i class="fas fa-chevron-left"></i>
                     </a>
                 }
                 <p class="page-number active">@(page)</p>
                 @if (page != maxPage)
                 {
-                    <a href="@Url.Action("ShopPage", "Home", new {Page =  Model.Item1.Page == null ? 1 : Model.Item1.Page + 1, FilterText = Model.Item1.FilterText, FilterType = Model.Item1.FilterType, FilterCity = Model.Item1.FilterCity, FilterCost = Model.Item1.FilterCost})" class="page-number">
+                    <a href="@Url.Action("ShopPage", "Home", new {Page =  Model.Item1.Page == null ? 1 : Model.Item1.Page + 1, FilterText = Model.Item1.FilterText, FilterType = Model.Item1.FilterType, FilterCity = Model.Item1.FilterCity, FilterCost = Model.Item1.FilterCost, FilterOnlyMy = Model.Item1.FilterOnlyMy, FilterNotActive = Model.Item1.FilterNotActive})" class="page-number">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 }

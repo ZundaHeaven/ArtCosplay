@@ -7,5 +7,7 @@
         public string? FilterType { get; set; }
         public string? FilterCity { get; set; }
         public int? FilterCost { get; set; }
+        public bool FilterOnlyMy { get; set; }
+        public bool FilterNotActive { get; set; }
     }
 }

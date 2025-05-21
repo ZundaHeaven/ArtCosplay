@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Data.Entity;
+using System.Linq;
 
 public class ChatHub : Hub
 {
@@ -30,7 +31,7 @@ public class ChatHub : Hub
     }
 
     [Authorize]
-    public async Task SendMessage(string message, int productId)
+    public async Task SendMessage(string message, int productId, int? chatId)
     {
         try
         {
@@ -44,12 +45,18 @@ public class ChatHub : Hub
 
             bool isSeller = product.SellerId == user.Id;
 
-            var chat = _appDbContext.Chats.FirstOrDefault(x => x.ProductId == product.ProductId &&
-                (x.BuyerId == user.Id || x.SellerId == user.Id));
+            Console.WriteLine("LOGLOGLOGLOGLOGLOGLOGLOGLOGLOGLOG " + chatId);
 
-            if(chat == null)
+            Chat? chat;
+            if (chatId == null)
+                chat = _appDbContext.Chats.FirstOrDefault(x => x.ProductId == product.ProductId &&
+                    (x.BuyerId == user.Id || x.SellerId == user.Id));
+            else
+                chat = _appDbContext.Chats.FirstOrDefault(x => x.ChatId == chatId);
+
+            if (chat == null)
             {
-                if(isSeller)
+                if (isSeller)
                     throw new HubException("Cant send message yourself");
 
                 chat = new Chat

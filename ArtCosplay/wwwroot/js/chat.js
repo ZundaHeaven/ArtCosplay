@@ -1,6 +1,6 @@
 ﻿"use strict";
 
-var chatId;
+var chatId = null;
 var userId = '';
 var productId = 0;
 
@@ -41,7 +41,7 @@ var connection = new signalR.HubConnectionBuilder()
     .build();
 
 connection.on("ReceiveMessage", function (message, user, chat) {
-    if (chat === chatId || (user === userId && chatId == undefined)) {
+    if (chat === chatId || (user === userId && chatId == null)) {
         chatId = chat;
         let date = new Date();
         var data = {
@@ -63,7 +63,7 @@ document.getElementById('send-button').addEventListener('click', (e) => {
     document.getElementById('message-area').value = '';
 
     if (connection.state === signalR.HubConnectionState.Connected) {
-        connection.invoke('SendMessage', message, productId)
+        connection.invoke('SendMessage', message, productId, chatId)
             .catch(err => console.error('Send failed:', err.toString()));
     } else {
         console.error('Cannot send message - connection not established');

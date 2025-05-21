@@ -40,7 +40,7 @@
                     <form method="post" asp-controller="User" asp-action="Logout" style="display: inline;">
                         <input class="nav-item" type="submit" value="Выйти" />
                     </form>
-                    <a class="nav-item" style="padding: 18px;" href="@Url.Action("Profile", "Home")">
+                    <a class="nav-item" style="padding: 18px;" href="@Url.Action("Profile", "Home", new {Id = string.Empty})">
                         @UserManager.GetUserName(User)
                         <img class="avatar" src="@((await UserManager.GetUserAsync(User))!.AvatarUrl)" alt="Аватар" />
                     </a>

@@ -57,7 +57,7 @@ namespace ArtCosplay.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put([FromBody] IdModel model)
+        public async Task<IActionResult> Put([FromBody] IdModel<int> model)
         {
             try
             {
@@ -110,7 +110,7 @@ namespace ArtCosplay.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete([FromBody] IdModel model)
+        public async Task<IActionResult> Delete([FromBody] IdModel<int> model)
         {
             try
             {
